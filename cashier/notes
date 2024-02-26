@@ -1,0 +1,8 @@
+<?php
+$sql = "SELECT distinct(`name`) as `name` FROM `faculty`;";
+$actresult = mysqli_query($conn, $sql);
+?>
+<?php while ($result = mysqli_fetch_assoc($actresult)) { ?>
+<option value=" <?php echo $result['name'] ?>"> <?php echo $result['name'] ?></option>
+<?php } ?>
+#para sa memo select multiple unta

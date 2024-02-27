@@ -1,6 +1,9 @@
 <?php
 session_start();
 include "../dbcon.php";
+include 'backend.php';
+$cashiering = new Cashiering();
+$cashiering->setDb($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -39,7 +42,7 @@ include "../dbcon.php";
                         <img src="../logo.png" class="img-fluid" alt="..." style="width: 50px; height:50px;">
                     </div>
                     <div class="col-md-4 fw-bold">
-                        <h4 style="color: white">Bung-aw Cashiering</h4>
+                        <h4 style="color: white">Bung-aw Cashiering </h4>
                     </div>
                 </div>
             </div>
@@ -63,9 +66,11 @@ include "../dbcon.php";
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $test = $cashiering->GetAll(); 
+                                while ($rows = (mysqli_fetch_assoc($test))){?>
                                     <tr>
                                         <td>
-                                            <?php echo "Food" ?>
+                                            <?php echo $rows['paid_item_type'] ?>
                                         </td>
                                         <td>
                                             <?php echo "₱150"  ?>
@@ -84,6 +89,7 @@ include "../dbcon.php";
                                             <?php echo "asdf" ?>
                                         </td> -->
                                     </tr>
+                                    <?php }?>
                             </tbody>
                     </table>
                 </div>

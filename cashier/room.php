@@ -1,6 +1,9 @@
 <?php
 session_start();
 include "../dbcon.php";
+include 'backend.php';
+$cashiering = new Cashiering();
+$cashiering->setDb($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -54,38 +57,104 @@ include "../dbcon.php";
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="example" class="table table-hover data-table" style="width: 100%">
-                        <button class="btn btn text-white mb-2" onclick="loading()" style="background-color: #064663; width: full-width">Add</button>
+                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add</button>
                         <div class="m-2">
                             <thead class>
                                 <tr>
-                                    <th>Room type</th>
-                                    <th>Amount</th>
+                                    <th>Room Name</th>
+                                    <th>Amount Paid</th>
+                                    <th>Remaining Balance</th>
                                     <th>Paid on</th>
-
+                                    <th>Payment Type</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                    <tr>
-                                        <td>
-                                            <?php echo "Deluxe" ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "1999.00"  ?>
-                                        </td>
-                                        <td>
-                                            <?php echo date("M d,Y h:i:sa")  ?>
-                                        </td>
-                                        <!-- <td>
-                                            <?php echo "asdf"  ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "asdf"  ?>
-                                        </td>
-                                        <td class="text-truncate" style="max-width: 300px;">
+                                <?php $test = $cashiering->GetAllRoomPayments();
+                                $total_price = 0;
+                                while ($rows = (mysqli_fetch_assoc($test))) { ?>
+                                <tr>
+                                    <td>
+                                        <?php echo $rows["item_name"] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo "₱" . $rows["amount"] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo "₱" . $rows["remaining_balance"] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo date("M d,Y h:i:sa", strtotime($rows['transdate'])) ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($rows["payment_type"] === '1'){
+                                            echo "Fully Paid";
+                                        }
+                                        else{
+                                            echo "Partially Paid";
+                                        } ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($rows["payment_type"] === '1'){
+                                            echo "Fully Paid";
+                                        }else{?>
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Edit Payment</a>
+                                        </div>
+                                        <!-- Edit Modal HTML -->
+                                        <div id="edit<?php echo $rows['id']; ?>" class="modal fade">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form id="update_form" method="POST">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Edit Payment To fully paid</h4>
+                                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <input type="text" id="id" name="booking_id" value="<?php echo $rows['item_id'] ?>" class="form-control" autocomplete="off" hidden>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <input type="text" id="id" name="item_id" value="<?php echo $rows['id'] ?>" class="form-control" autocomplete="off" hidden>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Item Name</label>
+                                                                <input type="text" id="item_name" name="item_name" value="<?php echo $rows['item_name'] ?>" class="form-control" autocomplete="off" disabled>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Item Price</label>
+                                                                <input type="text" id="item_price" name="item_price" value="<?php echo $rows['remaining_balance'] ?>" class="form-control" autocomplete="off" disabled>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Payment Amount</label>
+                                                                <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Change</label>
+                                                                <input type="text" id="change" name="change" class="form-control" autocomplete="off" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="hidden" value="2" name="type">
+                                                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
+                                                            <button class="btn btn-info" id="AddPayment" type="submit" name="submit">Add Payment</button>
+                                                        </div>
+                                                    </form>
+                                                    <?php
+                                                    if (array_key_exists('submit', $_POST)) {
+                                                        $cashiering->UpdateRoomPayment($_POST['item_id'], $_POST['payment_amount'],$_POST['booking_id'], $_POST['item_price']);
+                                                        unset($_POST);
+                                                    }
+                                                    ?>
 
-                                            <?php echo "asdf" ?>
-                                        </td> -->
-                                    </tr>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- End of Edit Modal -->
+                                        <?php }?>
+                                    </td>
+                                </tr>
+                                <?php } ?>
                             </tbody>
                     </table>
                 </div>
@@ -107,10 +176,17 @@ include "../dbcon.php";
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $("#myBtn").click(function () {
-                $("#myModal").modal("toggle");
+        $(document).ready(function() {
+            $("#myBtn").click(function() {
+                document.location.href = "addroom.php";
             });
+        });
+        $(document).on('change', '#payment_amount', function() {
+            var $row = $(this).closest('tr'); // Get the closest table row
+            var item_price = parseFloat($row.find('#item_price').val());
+            var payment_amount = parseFloat($(this).val());
+            var change = payment_amount - item_price;
+            $row.find('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
         });
     </script>
 

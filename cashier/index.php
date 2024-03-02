@@ -60,37 +60,43 @@ $cashiering->setDb($conn);
                             <thead class>
                                 <tr>
                                     <th>Payment type</th>
+                                    <th>Item Name</th>
                                     <th>Amount</th>
                                     <th>Paid on</th>
 
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php $test = $cashiering->GetAll(); 
-                                while ($rows = (mysqli_fetch_assoc($test))){?>
+                                <?php $results = $cashiering->GetAll();
+                                $total_price = 0;
+                                while ($rows = (mysqli_fetch_assoc($results))) { ?>
                                     <tr>
                                         <td>
                                             <?php echo $rows['paid_item_type'] ?>
                                         </td>
                                         <td>
-                                            <?php echo "₱150"  ?>
+                                            <?php echo $rows['item_name'] ?>
                                         </td>
                                         <td>
-                                            <?php echo date("M d,Y h:i:sa")  ?>
-                                        </td>
-                                        <!-- <td>
-                                            <?php echo "asdf"  ?>
+                                            <?php echo "₱" . $rows['amount'];
+                                            $total_price += $rows['amount'];   ?>
                                         </td>
                                         <td>
-                                            <?php echo "asdf"  ?>
+                                            <?php echo date("M d,Y h:i:sa", strtotime($rows['transdate']))  ?>
                                         </td>
-                                        <td class="text-truncate" style="max-width: 300px;">
+                                        <!-- <td class="text-truncate" style="max-width: 300px;">
 
                                             <?php echo "asdf" ?>
-                                        </td> -->
+                                        </td>  -->
                                     </tr>
-                                    <?php }?>
+                                <?php } ?>
                             </tbody>
+                            <tfoot>
+                                <td></td>
+                                <td></td>
+                                <th>Total Amount: ₱<?php echo $total_price; ?> <span class="totalAmount"></span></th>
+                                <td></td>
+                            </tfoot>
                     </table>
                 </div>
             </div>
@@ -110,8 +116,8 @@ $cashiering->setDb($conn);
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $("#myBtn").click(function () {
+        $(document).ready(function() {
+            $("#myBtn").click(function() {
                 $("#myModal").modal("toggle");
             });
         });

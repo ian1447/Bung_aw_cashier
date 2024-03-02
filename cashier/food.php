@@ -1,6 +1,9 @@
 <?php
 session_start();
 include "../dbcon.php";
+include 'backend.php';
+$cashiering = new Cashiering();
+$cashiering->setDb($conn);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,44 +51,45 @@ include "../dbcon.php";
 
         <div class="card shadow-lg">
             <div class="card-header">
-                <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
+                <span><i class="bi bi-file-text-fill me-2"></i></span> Foods Payments Logs
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="example" class="table table-hover data-table" style="width: 100%">
-                        <button class="btn btn text-white mb-2" onclick="loading()" style="background-color: #064663; width: full-width">Add</button>
+                    <table id="table" class="table table-hover data-table" style="width: 100%">
+                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add</button>
+
                         <div class="m-2">
                             <thead class>
                                 <tr>
-                                    <th>Food type</th>
+                                    <th>Food Name</th>
                                     <th>Amount</th>
                                     <th>Paid on</th>
 
                                 </tr>
                             </thead>
                             <tbody>
+                                <?php $test = $cashiering->GetAllFoodPayments();
+                                $total_price = 0;
+                                while ($rows = (mysqli_fetch_assoc($test))) { ?>
                                     <tr>
                                         <td>
-                                            <?php echo "Cornsilog" ?>
+                                            <?php echo $rows['item_name'] ?>
                                         </td>
                                         <td>
-                                            <?php echo "₱150"  ?>
+                                            <?php echo "₱" . $rows['amount'];
+                                            $total_price += $rows['amount']; ?>
                                         </td>
                                         <td>
-                                            <?php echo date("M d,Y h:i:sa")  ?>
+                                            <?php echo date("M d,Y h:i:sa", strtotime($rows['transdate'])) ?>
                                         </td>
-                                        <!-- <td>
-                                            <?php echo "asdf"  ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "asdf"  ?>
-                                        </td>
-                                        <td class="text-truncate" style="max-width: 300px;">
-
-                                            <?php echo "asdf" ?>
-                                        </td> -->
                                     </tr>
+                                <?php } ?>
                             </tbody>
+                            <tfoot>
+                                <td></td>
+                                <th>Total Amount: ₱<?php echo $total_price; ?> <span class="totalAmount"></span></th>
+                                <td></td>
+                            </tfoot>
                     </table>
                 </div>
             </div>
@@ -105,9 +109,9 @@ include "../dbcon.php";
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $("#myBtn").click(function () {
-                $("#myModal").modal("toggle");
+        $(document).ready(function() {
+            $("#myBtn").click(function() {
+                document.location.href = "addfood.php";
             });
         });
     </script>

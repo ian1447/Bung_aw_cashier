@@ -249,4 +249,96 @@ class Cashiering
       }
     }
   }
+
+  public function GetAllEntrance()
+  {
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children` FROM `payments` p 
+    JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
+    WHERE p.`paid_item_type` = 'entrance';";
+    $result = mysqli_query($this->con, $sql);
+
+    return $result;
+  }
+
+  public function GetAllPool()
+  {
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children` FROM `payments` p 
+    JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
+    WHERE p.`paid_item_type` = 'pool';";
+    $result = mysqli_query($this->con, $sql);
+
+    return $result;
+  }
+
+  public function AddEntrancePayment($payment, $name, $adults, $children)
+  {
+    $total = ($adults * 50) + ($children * 20);
+    if ($total > $payment) {
+      echo "<script>
+    alert('Payment Should be larger or equal to the total amount needed.');
+    window.location.href='entrance.php';
+    </script>";
+    } else {
+      $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`type`)
+      VALUES ('{$name}', {$adults}, {$children},'entrance');";
+
+      $payments_add = "INSERT INTO `payments` (`item_name`,`amount`,`paid_item_type`,`item_id`) 
+      VALUES ('{$name}',{$total},'entrance',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'entrance' ORDER BY id DESC LIMIT 1));";
+
+      if ($this->con->query($event_pool_insert) === TRUE) {
+        if ($this->con->query($payments_add) === TRUE) {
+          echo "<script>
+            alert('Adding Entrance payments Done');
+            window.location.href='entrance.php';
+          </script>";
+        } else {
+          echo "<script>
+            alert('Error Adding to payments.');
+            window.location.href='entrance.php';
+          </script>";
+        }
+      } else {
+        echo "<script>
+            alert('Error Adding Entrance payments.');
+            window.location.href='entrance.php';
+          </script>";
+      }
+    }
+  }
+
+  public function AddPoolPayment($payment, $name, $adults, $children)
+  {
+    $total = ($adults * 100) + ($children * 50);
+    if ($total > $payment) {
+      echo "<script>
+    alert('Payment Should be larger or equal to the total amount needed.');
+    window.location.href='pool.php';
+    </script>";
+    } else {
+      $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`type`)
+      VALUES ('{$name}', {$adults}, {$children},'pool');";
+
+      $payments_add = "INSERT INTO `payments` (`item_name`,`amount`,`paid_item_type`,`item_id`) 
+      VALUES ('{$name}',{$total},'pool',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'pool' ORDER BY id DESC LIMIT 1));";
+
+      if ($this->con->query($event_pool_insert) === TRUE) {
+        if ($this->con->query($payments_add) === TRUE) {
+          echo "<script>
+            alert('Adding Pool payments Done');
+            window.location.href='pool.php';
+          </script>";
+        } else {
+          echo "<script>
+            alert('Error Adding to payments.');
+            window.location.href='pool.php';
+          </script>";
+        }
+      } else {
+        echo "<script>
+            alert('Error Adding Pool payments.');
+            window.location.href='pool.php';
+          </script>";
+      }
+    }
+  }
 }

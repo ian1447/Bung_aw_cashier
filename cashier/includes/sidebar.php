@@ -42,6 +42,16 @@
               </div>
             </li>
             <li>
+              <a href="./entrance.php" class="nav-link px-3">
+                <span class="me-2"><i class="bi bi-chat-right-text"></i></span>
+                <span>Entrance</span>
+              </a>
+              <a href="./pool.php" class="nav-link px-3">
+                <span class="me-2"><i class="bi bi-chat-right-text"></i></span>
+                <span>Pool</span>
+              </a>
+            </li>
+            <li>
               <a href="./food.php" class="nav-link px-3">
                 <span class="me-2"><i class="bi bi-chat-right-text"></i></span>
                 <span>Food</span>

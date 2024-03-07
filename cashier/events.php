@@ -181,9 +181,15 @@ $cashiering->setDb($conn);
                                         <div class="d-grid gap-2 d-md-flex">
                                             <a href="#update<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Set as paid</a>
                                         </div>
-                                    <?php } else {
-                                        echo "Already Paid";
-                                    } ?>
+                                    <?php } else { ?>
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href=<?php echo "generate_receipt.php?type=events&item_name={$rows['name']}&no_of_people={$rows['capacity']}&amount={$rows['price']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
+                                        </div>
+                                        <!-- <a class="btn btn-outline-primary mx-2 mb-2" href=<?php echo "generate_receipt.php?type=events&item_name={$rows['name']}&no_of_people={$rows['capacity']}&amount={$rows['price']}" ?> >
+                                        <i></i>
+                                        Print Receipt
+                                        </a> -->
+                                    <?php } ?>
                                     <!-- Update Modal HTML -->
                                     <div id="update<?php echo $rows['id']; ?>" class="modal fade">
                                         <div class="modal-dialog">

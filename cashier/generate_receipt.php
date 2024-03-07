@@ -6,10 +6,10 @@ include "../dbcon.php";
 // Include the main TCPDF library (search for installation path).
 require_once('includes/TCPDF/tcpdf.php');
 
+$pageLayout = array(100, 100);
 // create new PDF document
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, $pageLayout, true, 'UTF-8', false);
 
-// ---------------------------------------------------------
 
 // set font
 $pdf->SetFont('times', '', 10);
@@ -18,7 +18,7 @@ $pdf->SetFont('times', '', 10);
 $pdf->AddPage();
 
 // set cell padding
-$pdf->setCellPaddings(1, 1, 1, 1);
+$pdf->setCellPaddings(0, 0, 0, 0);
 
 // set cell margins
 $pdf->setCellMargins(2, 4, 1, 1);
@@ -26,6 +26,11 @@ $pdf->setCellMargins(2, 4, 1, 1);
 // set color for background
 $pdf->SetFillColor(255, 255, 255);
 
+$type = $_GET['type'];
+$item_name = $_GET['item_name'];
+$no_of_people = $_GET['no_of_people'];
+$datetime = date_create()->format('Y-m-d');
+$amount = $_GET['amount'];
 
 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
 
@@ -44,45 +49,35 @@ $html = <<<EOD
 
 <div>
 
-<h3 style="text-align: center;"></h3>
 <p style="text-align: center; font-weight: bold">BUNG-AW-CASHIERING</p>
 
     <table cellspacing="0" cellpadding="1" border="1" style="border-color:gray;">
     <tr>
-    <th>Property Number:</th>
-    <td>asdf</td>
+    <th>Type:</th>
+    <td>{$type}</td>
     </tr>
     <tr>
-    <th>Classification:</th>
-    <td>asdf</td>
+    <th>Item Name:</th>
+    <td>{$item_name}</td>
     </tr>
     <tr>
-    <th>Article and Description:</th>
-    <td>asdf</td>
+    <th>Number of People:</th>
+    <td>{$no_of_people}</td>
     </tr>
     <tr>
-    <th>Acquisition Cost:</th>
-    <td>asdf</td>
+    <th>Printed On:</th>
+    <td>{$datetime}</td>
     </tr>
     <tr>
-    <th>Date Acquired:</th>
-    <td>asdf</td>
-    </tr>
-    <tr>
-    <th>Date of Account:</th>
-    <td></td>
-    </tr>
-    <tr>
-    <th>Property Custodian:</th>
-    <td>asdf</td>
+    <th>Amount:</th>
+    <td><span>Php </span>{$amount}</td>
     </tr>
 </table>
 
-<h3 style="color:red; text-align: center"> PLEASE DO NOT REMOVE </h3>
 </div>
 EOD;
 
-
+//<h3 style="color:red; text-align: center"> PLEASE DO NOT REMOVE </h3>
 // Multicell test
 $pdf->writeHTMLCell(80, 20,'', '', $html, 1, 0, true, '', true);
 

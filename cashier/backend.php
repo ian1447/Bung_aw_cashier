@@ -252,7 +252,7 @@ class Cashiering
 
   public function GetAllEntrance()
   {
-    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children` FROM `payments` p 
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
     JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
     WHERE p.`paid_item_type` = 'entrance';";
     $result = mysqli_query($this->con, $sql);
@@ -262,7 +262,7 @@ class Cashiering
 
   public function GetAllPool()
   {
-    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children` FROM `payments` p 
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
     JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
     WHERE p.`paid_item_type` = 'pool';";
     $result = mysqli_query($this->con, $sql);

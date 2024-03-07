@@ -95,9 +95,11 @@ $cashiering->setDb($conn);
                                         } ?>
                                     </td>
                                     <td>
-                                        <?php if ($rows["payment_type"] === '1'){
-                                            echo "Fully Paid";
-                                        }else{?>
+                                        <?php if ($rows["payment_type"] === '1'){ ?>
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href=<?php echo "generate_receipt.php?type=Room&item_name={$rows['item_name']}&no_of_people=0&amount={$rows['amount']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
+                                        </div>
+                                        <?php }else{?>
                                         <div class="d-grid gap-2 d-md-flex">
                                             <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Edit Payment</a>
                                         </div>

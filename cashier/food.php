@@ -64,6 +64,7 @@ $cashiering->setDb($conn);
                                     <th>Food Name</th>
                                     <th>Amount</th>
                                     <th>Paid on</th>
+                                    <th>Actions</th>
 
                                 </tr>
                             </thead>
@@ -81,6 +82,11 @@ $cashiering->setDb($conn);
                                         </td>
                                         <td>
                                             <?php echo date("M d,Y h:i:sa", strtotime($rows['transdate'])) ?>
+                                        </td>
+                                        <td>
+                                            <div class="d-grid gap-2 d-md-flex">
+                                                <a href=<?php echo "generate_receipt.php?type=foods&item_name={$rows['item_name']}&no_of_people=1&amount={$rows['amount']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
+                                            </div>
                                         </td>
                                     </tr>
                                 <?php } ?>

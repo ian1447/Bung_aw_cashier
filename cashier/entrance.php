@@ -164,7 +164,7 @@ $cashiering->setDb($conn);
                                 <td>
                                     <?php if ( $rows['amount'] !== null) {?>
                                     <div class="d-grid gap-2 d-md-flex">
-                                        <a href=<?php echo "generate_receipt.php?type=Pool&no_of_people={$rows['total']}&amount={$rows['amount']}&item_name={$rows['item_name']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
+                                        <a href=<?php echo "generate_receipt.php?type=Entrance&no_of_people={$rows['total']}&amount={$rows['amount']}&item_name={$rows['item_name']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
                                     </div>
                                     <?php } ?>
                                 </td>

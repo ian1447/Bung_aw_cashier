@@ -71,6 +71,13 @@ $cashiering->setDb($conn);
                                         <form class="needs-validation" method="POST">
                                             <div class="form-row">
                                                 <div class="col-md-12 mb-2">
+                                                    <label for="event_name">Booker Name:</label>
+                                                    <input type="text" class="form-control" id="booker_name" name="booker_name" autocomplete="off" placeholder="Enter Event Name" required>
+                                                    <div class="valid-feedback">
+                                                        Looks good!
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 mb-2">
                                                     <label for="event_name">Event Name:</label>
                                                     <input type="text" class="form-control" id="event_name" name="event_name" autocomplete="off" placeholder="Enter Event Name" required>
                                                     <div class="valid-feedback">
@@ -120,7 +127,7 @@ $cashiering->setDb($conn);
                                         </form>
                                         <?php
                                         if (array_key_exists('AddEvent', $_POST)) {
-                                            $cashiering->SaveEvents($_POST['event_name'], $_POST['event_venue'], $_POST['event_description'], $_POST['no_of_people'], $_POST['date_of_use'], $_POST['amount']);
+                                            $cashiering->SaveEvents($_POST['booker_name'],$_POST['event_name'], $_POST['event_venue'], $_POST['event_description'], $_POST['no_of_people'], $_POST['date_of_use'], $_POST['amount']);
                                             unset($_POST);
                                         }
                                         ?>
@@ -133,6 +140,7 @@ $cashiering->setDb($conn);
                 <div class="m-2">
                     <thead class>
                         <tr>
+                            <th>Booker Name</th>
                             <th>Event Name</th>
                             <th>Event Venue</th>
                             <th>Event Description</th>
@@ -149,6 +157,9 @@ $cashiering->setDb($conn);
                         $total_price = 0;
                         while ($rows = (mysqli_fetch_assoc($results))) { ?>
                             <tr>
+                                <td>
+                                    <?php echo $rows['booker_name'] ?>
+                                </td>
                                 <td>
                                     <?php echo $rows['name'] ?>
                                 </td>
@@ -242,6 +253,7 @@ $cashiering->setDb($conn);
                         <?php } ?>
                     </tbody>
                     <tfoot>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>

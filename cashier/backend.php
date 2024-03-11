@@ -41,10 +41,10 @@ class Cashiering
     return $result;
   }
 
-  public function SaveEvents($eventname, $eventvenue, $description, $capacity, $date, $price)
+  public function SaveEvents($bookername,$eventname, $eventvenue, $description, $capacity, $date, $price)
   {
-    $add_event = "INSERT INTO `events` (`name`,`venue`,`description`,`date`,`price`,`capacity`,`status`)
-                VALUES ('{$eventname}','{$eventvenue}','{$description}','{$date}',{$price},{$capacity},0);";
+    $add_event = "INSERT INTO `events` (`booker_name`,`name`,`venue`,`description`,`date`,`price`,`capacity`,`status`)
+                VALUES ('{$bookername}','{$eventname}','{$eventvenue}','{$description}','{$date}',{$price},{$capacity},0);";
     if ($this->con->query($add_event) === TRUE) {
       echo "<script>
       alert('Adding of Events Successful');
@@ -254,7 +254,7 @@ class Cashiering
   {
     $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
     JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
-    WHERE p.`paid_item_type` = 'entrance';";
+    WHERE p.`paid_item_type` = 'entrance' GROUP BY ep.id;";
     $result = mysqli_query($this->con, $sql);
 
     return $result;
@@ -262,9 +262,9 @@ class Cashiering
 
   public function GetAllPool()
   {
-    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
-    JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
-    WHERE p.`paid_item_type` = 'pool';";
+      $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
+      JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
+      WHERE p.`paid_item_type` = 'pool' GROUP BY ep.id;";
     $result = mysqli_query($this->con, $sql);
 
     return $result;

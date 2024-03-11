@@ -78,7 +78,7 @@ $cashiering->setDb($conn);
                                         <?php echo $rows["item_name"] ?>
                                     </td>
                                     <td>
-                                        <?php echo "₱" . $rows["amount"] ?>
+                                        <?php echo "₱" . $rows["amount"]; $total_price += $rows["amount"]; ?>
                                     </td>
                                     <td>
                                         <?php echo "₱" . $rows["remaining_balance"] ?>
@@ -158,6 +158,10 @@ $cashiering->setDb($conn);
                                 </tr>
                                 <?php } ?>
                             </tbody>
+                            <tfoot>
+                                <td></td>
+                                <th>Total: ₱<?php echo $total_price; ?> <span class="totalAmount"></span></th>
+                            </tfoot>
                     </table>
                 </div>
             </div>

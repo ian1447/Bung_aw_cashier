@@ -141,6 +141,20 @@ class Cashiering
     return $result;
   }
 
+  public function GetAllRoomNumber($roomtypeid)
+  {
+    $sql = "SELECT * FROM `rooms` r WHERE r.`room_type_id` = {$roomtypeid} AND r.`available` = 1 AND r.`status` = 1;";
+    $result = mysqli_query($this->con, $sql);
+
+    return $result;
+  }
+
+  public function BookRoomManually($roomnumber)
+  {
+
+    return "hehe";
+  }
+
   public function GetAllRoomItems()
   {
     $sql = "SELECT rb.id,r.`room_number`,DATE_FORMAT(DATE(rb.`arrival_date`), '%M %d,%Y') AS arrival_date,

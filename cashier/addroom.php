@@ -55,7 +55,7 @@ $cashiering->setDb($conn);
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add Manually</button>
+                    <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Book Manually</button>
                     <!-- Modal HTML -->
                     <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                             <div class="modal-dialog">
@@ -64,73 +64,7 @@ $cashiering->setDb($conn);
                                         <h5 class="modal-title">Add Bookings </h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
-                                    <div class="modal-body">
-
-                                        <form class="needs-validation" method="POST">
-                                            <div class="form-row">
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="event_name">Booker Name:</label>
-                                                    <input type="text" class="form-control" id="booker_name" name="booker_name" autocomplete="off" placeholder="Enter Event Name" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="event_name">Event Name:</label>
-                                                    <input type="text" class="form-control" id="event_name" name="event_name" autocomplete="off" placeholder="Enter Event Name" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="event_venue">Event Venue</label>
-                                                    <input type="text" class="form-control" id="event_venue" name="event_venue" autocomplete="off" placeholder="Enter Event Venue" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="event_description">Event Description</label>
-                                                    <input type="text" class="form-control" id="event_description" name="event_description" autocomplete="off" placeholder="Enter Description" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="no_of_people">Number of People</label>
-                                                    <input type="number" class="form-control" id="no_of_people" name="no_of_people" autocomplete="off" placeholder="Enter Number of People" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="no_of_people">Date of Use</label>
-                                                    <input type="date" class="form-control" id="no_of_people" name="date_of_use" autocomplete="off" placeholder="Enter Date of use" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <label for="no_of_people">Amount</label>
-                                                    <input type="number" class="form-control" id="no_of_people" name="amount" autocomplete="off" placeholder="Enter Amount" required>
-                                                    <div class="valid-feedback">
-                                                        Looks good!
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-success" name="AddEvent">Save</button>
-                                            </div>
-                                        </form>
-                                        <?php
-                                        // if (array_key_exists('AddEvent', $_POST)) {
-                                        //     $cashiering->SaveEvents($_POST['booker_name'],$_POST['event_name'], $_POST['event_venue'], $_POST['event_description'], $_POST['no_of_people'], $_POST['date_of_use'], $_POST['amount']);
-                                        //     unset($_POST);
-                                        // }
-                                        ?>
-
-                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -167,10 +101,10 @@ $cashiering->setDb($conn);
                                         </td>
                                         <td>
                                             <div class="d-grid gap-2 d-md-flex">
-                                                <a href="#edit" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Add Payment</a>
+                                                <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Add Payment</a>
                                             </div>
                                             <!-- Edit Modal HTML -->
-                                            <div id="edit" class="modal fade">
+                                            <div id="edit<?php echo $rows['id']; ?>" class="modal fade">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
                                                         <form id="update_form" method="POST">

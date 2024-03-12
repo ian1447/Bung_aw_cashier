@@ -115,7 +115,7 @@ $cashiering->setDb($conn);
                                                                 <div class="form-group">
                                                                     <label>Room Number</label>
                                                                     <!-- <input type="text" id="item_price" name="item_price" value="<?php echo $rows['room_cost'] ?>" class="form-control" autocomplete="off"> -->
-                                                                    <select class="form-select" aria-label="Default select example">
+                                                                    <select class="form-select" aria-label="Default select example" name="room_number" id="room_number">
                                                                         <option selected>-- Please Select Room Number --</option>
                                                                         <?php $RoomNumbersResult = $cashiering->GetAllRoomNumber($rows['id']);
                                                                         while ($number = (mysqli_fetch_assoc($RoomNumbersResult))) { ?>
@@ -145,6 +145,7 @@ $cashiering->setDb($conn);
                                                                 <div class="form-group">
                                                                     <label>Payment Amount</label>
                                                                     <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" disabled>
+                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off" hidden>
                                                                 </div>
                                                                 <label style="color: red" id="error<?php echo $rows['id']; ?>" name="error"></label>
                                                             </div>
@@ -155,10 +156,10 @@ $cashiering->setDb($conn);
                                                             </div>
                                                         </form>
                                                         <?php
-                                                        // if (array_key_exists('submit', $_POST)) {
-                                                        //     $cashiering->SaveRoomPayment($_POST['item_id'], $_POST['payment_amount'],$_POST['payment_type'],$_POST['room_name']);
-                                                        //     unset($_POST);
-                                                        // }
+                                                        if (array_key_exists('submit', $_POST)) {
+                                                            $cashiering->BookRoomManually($_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
+                                                            unset($_POST);
+                                                        }
                                                         ?>
                                                     </div>
                                                 </div>
@@ -210,13 +211,14 @@ $cashiering->setDb($conn);
             if (total_guest <= max_guests) {
                 total = payment * days;
                 $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+                $row.find('#total_cost').val(total);
             } else {
                 var number_of_exceeding_guests = total_guest - max_guests;
                 if (number_of_exceeding_guests > max_exceeding_guets) {
                     labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
                 } else {
                     total = (payment * days) + (number_of_exceeding_guests * 150);
-                    $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
+                    $row.find('#total_cost').val(total);
                 }
             }
         });
@@ -238,6 +240,7 @@ $cashiering->setDb($conn);
             if (total_guest <= max_guests) {
                 total = payment * days;
                 $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+                $row.find('#total_cost').val(total);
             } else {
                 var number_of_exceeding_guests = total_guest - max_guests;
                 if (number_of_exceeding_guests > max_exceeding_guets) {
@@ -245,6 +248,7 @@ $cashiering->setDb($conn);
                 } else {
                     total = (payment * days) + (number_of_exceeding_guests * 150);
                     $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
+                    $row.find('#total_cost').val(total);
                 }
             }
         });
@@ -266,6 +270,7 @@ $cashiering->setDb($conn);
             if (total_guest <= max_guests) {
                 total = payment * days;
                 $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+                $row.find('#total_cost').val(total);
             } else {
                 var number_of_exceeding_guests = total_guest - max_guests;
                 if (number_of_exceeding_guests > max_exceeding_guets) {
@@ -273,6 +278,7 @@ $cashiering->setDb($conn);
                 } else {
                     total = (payment * days) + (number_of_exceeding_guests * 150);
                     $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
+                    $row.find('#total_cost').val(total);
                 }
             }
         });

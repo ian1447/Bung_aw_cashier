@@ -17,9 +17,72 @@ class Cashiering
     return $result;
   }
 
-  public function GetAllFoodPayments()
+  public function GetAllFoodOrders()
   {
-    $sql = "SELECT * FROM `payments` WHERE `paid_item_type` = 'food';";
+    $sql = "SELECT * FROM `food_bulk_orders`;";
+    $result = mysqli_query($this->con, $sql);
+
+    return $result;
+  }
+
+  public function FoodAddOrder($customerName)
+  {
+    $sql = "INSERT INTO `food_bulk_orders` (`customer_name`) VALUES ('{$customerName}');";
+    if ($this->con->query($sql) === TRUE) {
+      $getsql = "SELECT id FROM `food_bulk_orders` ORDER BY id DESC LIMIT 1;";
+      $result = mysqli_query($this->con, $getsql);
+      $row = mysqli_fetch_assoc($result);
+      $_SESSION['bulkid'] = $row['id'];
+      echo "<script>
+        alert('Adding of Food Order Successful');
+        window.location.href='foodbulk.php';
+      </script>";
+    }
+  }
+
+  public function FinalizeFoodOrder($bulk_id)
+  {
+    $sql = "SELECT SUM(fo.`cost`) AS `total` FROM `food_orders` fo 
+    JOIN `foods` f ON f.`id` = fo.`food_id`
+    WHERE fo.`food_bulk_id` = {$bulk_id};";
+    $result = mysqli_query($this->con, $sql);
+    $row = mysqli_fetch_assoc($result);
+
+    $sql2 = "SELECT * FROM `food_bulk_orders` WHERE id = {$bulk_id};";
+    $result2 = mysqli_query($this->con, $sql2);
+    $row2 = mysqli_fetch_assoc($result2);
+
+    $sqlupdatebulk = "UPDATE `food_bulk_orders` fbo SET fbo.`total_amount` = {$row['total']} WHERE fbo.`id` = {$bulk_id};";
+    $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
+    VALUES ({$bulk_id}, '{$row2['customer_name']}', {$row2['total_amount']}, 1, 'food');";
+
+    if ($this->con->query($sqlupdatebulk) === TRUE) {
+      if ($this->con->query($addsql) === TRUE) {
+        $_SESSION['bulkid'] = "";
+        echo "<script>
+        alert('Finalizing order Successful');
+        window.location.href='food.php';
+      </script>";
+      } else {
+        echo "<script>
+        alert('Error updating order');
+        window.location.href='foodbulk.php';
+      </script>";
+      }
+    } else {
+      echo "<script>
+        alert('Error finalizing order');
+        window.location.href='foodbulk.php';
+      </script>";
+    }
+  }
+
+  public function GetAllFoodPayments($bulk_id)
+  {
+    //$sql = "SELECT * FROM `payments` WHERE `paid_item_type` = 'food';";
+    $sql = "SELECT * FROM `food_orders` fo 
+    JOIN `foods` f ON f.`id` = fo.`food_id`
+    WHERE fo.`food_bulk_id` = {$bulk_id};";
     $result = mysqli_query($this->con, $sql);
 
     return $result;
@@ -86,43 +149,41 @@ class Cashiering
     }
   }
 
-  public function SaveFoodPayment($id, $payment)
+  public function SaveFoodPayment($id)
   {
     $sql = "SELECT * FROM `foods` WHERE `id` = " . $id . ";";
     $result = mysqli_query($this->con, $sql);
 
     $row = mysqli_fetch_assoc($result);
-    if ($row['price'] > $payment) {
-      echo "<script>
-      alert('Payment Should be larger than price.');
-      window.location.href='addfood.php';
-      </script>";
-    } else {
+    // if ($row['price'] > $payment) {
+    //   echo "<script>
+    //   alert('Payment Should be larger than price.');
+    //   window.location.href='addfood.php';
+    //   </script>";
+    // } else {
 
-      $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`)
-                VALUES ({$id},1,{$row['price']},NOW());";
-      $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
-              VALUES ({$id}, '{$row['name']}', {$row['price']}, 1, 'food');";
-
-      if ($this->con->query($food_order) === TRUE) {
-        if ($this->con->query($addsql) === TRUE) {
-          echo "<script>
-        alert('Payment Done');
-        window.location.href='food.php';
-      </script>";
-        } else {
-          echo "<script>
-        alert('Error Adding Payments.');
-        window.location.href='addfood.php';
-      </script>";
-        }
+    $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
+                VALUES ({$id},1,{$row['price']},NOW(),{$_SESSION['bulkid']});";
+    $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$row['price']} WHERE id = {$_SESSION['bulkid']};";
+    if ($this->con->query($food_order) === TRUE) {
+      if ($this->con->query($update_food_bulk) === TRUE) {
+        echo "<script>
+        alert('Order Added');
+        window.location.href='foodbulk.php';
+        </script>";
       } else {
         echo "<script>
-      alert('Error Adding Food Order.');
-      window.location.href='addfood.php';
-    </script>";
+        alert('Error Updating Food.');
+        window.location.href='addfood.php';
+        </script>";
       }
+    } else {
+      echo "<script>
+        alert('Error Adding Food Order.');
+        window.location.href='addfood.php';
+        </script>";
     }
+    // }
   }
 
   public function GetAllRoomPayments()

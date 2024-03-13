@@ -24,6 +24,7 @@
                 // if($row['privilege'] === $privilege)
                 // {
             $_SESSION['email'] = $row['email'];
+            $_SESSION['bulkid'] = "";
             if($row['role']==="cashier")
             {
                 header("Location: cashier/index.php");

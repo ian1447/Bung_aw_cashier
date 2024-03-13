@@ -104,24 +104,24 @@ $cashiering->setDb($conn);
                                                                     <label>Item Price</label>
                                                                     <input type="text" id="item_price" name="item_price" value="<?php echo $rows['price'] ?>" class="form-control" autocomplete="off" disabled>
                                                                 </div>
-                                                                <div class="form-group">
+                                                                <!-- <div class="form-group">
                                                                     <label>Payment Amount</label>
-                                                                    <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" required>
+                                                                    <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" hidden>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <label>Change</label>
-                                                                    <input type="text" id="change" name="change" class="form-control" autocomplete="off" disabled>
-                                                                </div>
+                                                                    <input type="text" id="change" name="change" class="form-control" autocomplete="off" hidden>
+                                                                </div> -->
                                                             </div>
                                                             <div class="modal-footer">
                                                                 <input type="hidden" value="2" name="type">
                                                                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                                                <button class="btn btn-info" id="AddPayment" type="submit" name="submit">Add Payment</button>
+                                                                <button class="btn btn-info" id="AddPayment" type="submit" name="submit">Add to Order</button>
                                                             </div>
                                                         </form>
                                                         <?php
                                                         if (array_key_exists('submit', $_POST)) {
-                                                            $cashiering->SaveFoodPayment($_POST['item_id'], $_POST['payment_amount']);
+                                                            $cashiering->SaveFoodPayment($_POST['item_id']);
                                                             unset($_POST);
                                                         }
                                                         ?>

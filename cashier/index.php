@@ -60,6 +60,7 @@ $cashiering->setDb($conn);
                             <thead class>
                                 <tr>
                                     <th>Payment type</th>
+                                    <th>Booker Name</th>
                                     <th>Item Name</th>
                                     <th>Amount</th>
                                     <th>Paid on</th>
@@ -73,6 +74,9 @@ $cashiering->setDb($conn);
                                     <tr>
                                         <td>
                                             <?php echo $rows['paid_item_type'] ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $rows['booker'] ?>
                                         </td>
                                         <td>
                                             <?php echo $rows['item_name'] ?>

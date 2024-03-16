@@ -54,6 +54,20 @@ $cashiering->setDb($conn);
                 <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
             </div>
             <div class="card-body">
+
+                <div class="form-group">
+                    <label>Item Count:</label>
+                    <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"])?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
+                    <form method="POST">
+                        <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
+                    </form>
+                    <?php
+                    if (array_key_exists('finalize', $_POST)) {
+                        $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                        unset($_POST);
+                    }
+                    ?>
+                </div>
                 <div class="table-responsive">
                     <table id="example" class="table table-hover data-table" style="width: 100%">
                         <div class="m-2">
@@ -121,8 +135,12 @@ $cashiering->setDb($conn);
                                                         </form>
                                                         <?php
                                                         if (array_key_exists('submit', $_POST)) {
-                                                            $cashiering->SaveFoodPayment($_POST['item_id']);
+                                                            //$cashiering->SaveFoodPayment($_POST['item_id']);
+                                                            array_push($_SESSION['foodarr'], $_POST['item_id']);
                                                             unset($_POST);
+                                                            echo "<script>
+                                                            window.location.href='addfood.php';
+                                                            </script>";
                                                         }
                                                         ?>
 

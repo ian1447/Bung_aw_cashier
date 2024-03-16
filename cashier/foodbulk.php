@@ -57,15 +57,6 @@ $cashiering->setDb($conn);
                 <div class="table-responsive">
                     <table id="table" class="table table-hover data-table" style="width: 100%">
                         <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add Order</button>
-                        <form method="POST">
-                            <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
-                        </form>
-                        <?php
-                        if (array_key_exists('finalize', $_POST)) {
-                            $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                            unset($_POST);
-                        }
-                        ?>
                         <div class="m-2">
                             <thead class>
                                 <tr>

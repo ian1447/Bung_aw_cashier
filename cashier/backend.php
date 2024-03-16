@@ -19,7 +19,7 @@ class Cashiering
 
   public function GetAllFoodOrders()
   {
-    $sql = "SELECT * FROM `food_bulk_orders`;";
+    $sql = "SELECT * FROM `food_bulk_orders` WHERE total_amount != 0;";
     $result = mysqli_query($this->con, $sql);
 
     return $result;
@@ -32,16 +32,43 @@ class Cashiering
       $getsql = "SELECT id FROM `food_bulk_orders` ORDER BY id DESC LIMIT 1;";
       $result = mysqli_query($this->con, $getsql);
       $row = mysqli_fetch_assoc($result);
+      $_SESSION['foodarr'] = array();
       $_SESSION['bulkid'] = $row['id'];
       echo "<script>
         alert('Adding of Food Order Successful');
-        window.location.href='foodbulk.php';
+        window.location.href='addfood.php';
       </script>";
     }
   }
 
   public function FinalizeFoodOrder($bulk_id)
   {
+    $i = 0;
+    $len = count($_SESSION['foodarr']);
+    foreach ($_SESSION['foodarr'] as $food) {
+      $sql = "SELECT * FROM `foods` WHERE `id` = " . $food . ";";
+      $result = mysqli_query($this->con, $sql);
+
+      $row = mysqli_fetch_assoc($result);
+
+      $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
+                  VALUES ({$food},1,{$row['price']},NOW(),{$_SESSION['bulkid']});";
+      $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$row['price']} WHERE id = {$_SESSION['bulkid']};";
+      if ($this->con->query($food_order) === TRUE) {
+        if ($this->con->query($update_food_bulk) === FALSE) {
+          echo "<script>
+          alert('Error Updating Food.');
+          window.location.href='addfood.php';
+          </script>";
+        }
+      } else {
+        echo "<script>
+          alert('Error Adding Food Order.');
+          window.location.href='addfood.php';
+          </script>";
+      }
+    }
+
     $sql = "SELECT SUM(fo.`cost`) AS `total` FROM `food_orders` fo 
     JOIN `foods` f ON f.`id` = fo.`food_id`
     WHERE fo.`food_bulk_id` = {$bulk_id};";
@@ -66,13 +93,13 @@ class Cashiering
       } else {
         echo "<script>
         alert('Error updating order');
-        window.location.href='foodbulk.php';
+        window.location.href='addfood.php';
       </script>";
       }
     } else {
       echo "<script>
         alert('Error finalizing order');
-        window.location.href='foodbulk.php';
+        window.location.href='addfood.php';
       </script>";
     }
   }

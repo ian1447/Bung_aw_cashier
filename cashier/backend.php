@@ -11,7 +11,10 @@ class Cashiering
 
   public function GetAll()
   {
-    $sql = "SELECT * FROM `payments`;";
+    // $sql = "SELECT * FROM `payments`;";
+    $sql = "SELECT *,IF(p.`paid_item_type` = 'room',IF((SELECT user_id FROM `room_bookings` WHERE id = p.`item_id`)=0,'Manual',
+    (SELECT CONCAT_WS(' ',u.`first_name`,u.`last_name`) FROM `room_bookings` rb
+    JOIN `users` u ON u.`id` = rb.`user_id` WHERE rb.`id` =  p.`item_id`)),p.`booker_name`) AS `booker` FROM `payments` p;";
     $result = mysqli_query($this->con, $sql);
 
     return $result;
@@ -80,8 +83,8 @@ class Cashiering
     $row2 = mysqli_fetch_assoc($result2);
 
     $sqlupdatebulk = "UPDATE `food_bulk_orders` fbo SET fbo.`total_amount` = {$row['total']} WHERE fbo.`id` = {$bulk_id};";
-    $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
-    VALUES ({$bulk_id}, '{$row2['customer_name']}', {$row2['total_amount']}, 1, 'food');";
+    $addsql = "INSERT INTO `payments` (`item_id`,`booker_name`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
+    VALUES ({$bulk_id}, '{$row2['customer_name']}','Food Order', {$row2['total_amount']}, 1, 'food');";
 
     if ($this->con->query($sqlupdatebulk) === TRUE) {
       if ($this->con->query($addsql) === TRUE) {
@@ -160,8 +163,8 @@ class Cashiering
       window.location.href='events.php';
       </script>";
     } else {
-      $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
-              VALUES ({$id}, '{$row['name']}', {$row['price']}, 1, 'event');";
+      $addsql = "INSERT INTO `payments` (`item_id`,`booker_name`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
+              VALUES ({$id},'{$row['booker_name']}','{$row['name']}', {$row['price']}, 1, 'event');";
       if ($this->con->query($addsql) === TRUE) {
         echo "<script>
       alert('Payment Done');
@@ -404,8 +407,8 @@ class Cashiering
       $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`type`)
       VALUES ('{$name}', {$adults}, {$children},'entrance');";
 
-      $payments_add = "INSERT INTO `payments` (`item_name`,`amount`,`paid_item_type`,`item_id`) 
-      VALUES ('{$name}',{$total},'entrance',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'entrance' ORDER BY id DESC LIMIT 1));";
+      $payments_add = "INSERT INTO `payments` (`booker_name`,`item_name`,`amount`,`paid_item_type`,`item_id`) 
+      VALUES ('{$name}','Entrance',{$total},'entrance',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'entrance' ORDER BY id DESC LIMIT 1));";
 
       if ($this->con->query($event_pool_insert) === TRUE) {
         if ($this->con->query($payments_add) === TRUE) {
@@ -440,8 +443,8 @@ class Cashiering
       $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`type`)
       VALUES ('{$name}', {$adults}, {$children},'pool');";
 
-      $payments_add = "INSERT INTO `payments` (`item_name`,`amount`,`paid_item_type`,`item_id`) 
-      VALUES ('{$name}',{$total},'pool',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'pool' ORDER BY id DESC LIMIT 1));";
+      $payments_add = "INSERT INTO `payments` (`booker_name`,`item_name`,`amount`,`paid_item_type`,`item_id`) 
+      VALUES ('{$name}','Pool',{$total},'pool',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'pool' ORDER BY id DESC LIMIT 1));";
 
       if ($this->con->query($event_pool_insert) === TRUE) {
         if ($this->con->query($payments_add) === TRUE) {

@@ -144,7 +144,7 @@ $cashiering->setDb($conn);
                         while ($rows = (mysqli_fetch_assoc($results))) { ?>
                             <tr>
                                 <td>
-                                    <?php echo $rows['item_name'] ?>
+                                    <?php echo $rows['booker_name'] ?>
                                 </td>
                                 <td>
                                     <?php echo $rows['no_of_adults'] ?>

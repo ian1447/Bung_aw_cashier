@@ -124,7 +124,7 @@ $cashiering->setDb($conn);
                                     </td>
                                     <td>
                                         <div class="d-grid gap-2 d-md-flex">
-                                            <a href=<?php echo "generate_food_receipt.php?id={$rows['id']}" ?>
+                                            <a href=<?php echo "generate_food_receipt.php?id={$rows['id']}&name={$rows['customer_name']}" ?>
                                                 target="_blank" class="btn btn-primary btn-sm me-md-2"><span
                                                     class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
                                         </div>

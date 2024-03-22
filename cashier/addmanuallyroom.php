@@ -113,6 +113,10 @@ $cashiering->setDb($conn);
                                                                     <input type="text" value="<?php echo $rows['name'] ?>" class="form-control" autocomplete="off" disabled>
                                                                 </div>
                                                                 <div class="form-group">
+                                                                    <label>Room Booker</label>
+                                                                    <input type="text" id="booker" name="booker" class="form-control" autocomplete="off" required>
+                                                                </div>
+                                                                <div class="form-group">
                                                                     <label>Room Number</label>
                                                                     <!-- <input type="text" id="item_price" name="item_price" value="<?php echo $rows['room_cost'] ?>" class="form-control" autocomplete="off"> -->
                                                                     <select class="form-select" aria-label="Default select example" name="room_number" id="room_number">
@@ -157,7 +161,7 @@ $cashiering->setDb($conn);
                                                         </form>
                                                         <?php
                                                         if (array_key_exists('submit', $_POST)) {
-                                                            $cashiering->BookRoomManually($_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
+                                                            $cashiering->BookRoomManually($_POST['booker'],$_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
                                                             unset($_POST);
                                                         }
                                                         ?>

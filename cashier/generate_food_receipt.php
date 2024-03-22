@@ -29,6 +29,7 @@ $pdf->setCellMargins(0, 0, 0, 0);
 $pdf->SetFillColor(255, 255, 255);
 
 $id = $_GET['id'];
+$name = $_GET['name'];
 $html = <<<EOD
 <div style = "line-height: 5px; border-style: solid;">
     <p style="text-align: center; font-weight: bold">BUNG-AW-CASHIERING</p>
@@ -58,7 +59,7 @@ while ($result = mysqli_fetch_assoc($actresult)) {
     </table>
     EOD;
     if ($i == 1) {
-        $pos = ($i * 5) + 20;
+        $pos = ($i * 5) + 23;
     } else {
         $pos = ($i * 5) + 23;
     }
@@ -72,7 +73,8 @@ $endhtml = <<<EOD
         <td align="right">Total: $total Pesos</td>
     </tr>
 </table>
-EOD;
+<label style=" text-align: left;">Ordered By: $name </label>
+EOD; 
 $pos = ($i * 5) + 23;
 $pdf->writeHTMLCell(0, 0, '', $pos, $endhtml, 0, 0, true, '', true);
 // ---------------------------------------------------------

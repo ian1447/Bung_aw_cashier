@@ -12,7 +12,7 @@ class Cashiering
   public function GetAll()
   {
     // $sql = "SELECT * FROM `payments`;";
-    $sql = "SELECT *,IF(p.`paid_item_type` = 'room',IF((SELECT user_id FROM `room_bookings` WHERE id = p.`item_id`)=0,'Manual',
+    $sql = "SELECT *,IF(p.`paid_item_type` = 'room',IF((SELECT user_id FROM `room_bookings` WHERE id = p.`item_id`)=0, p.`booker_name`,
     (SELECT CONCAT_WS(' ',u.`first_name`,u.`last_name`) FROM `room_bookings` rb
     JOIN `users` u ON u.`id` = rb.`user_id` WHERE rb.`id` =  p.`item_id`)),p.`booker_name`) AS `booker` FROM `payments` p;";
     $result = mysqli_query($this->con, $sql);
@@ -240,10 +240,10 @@ class Cashiering
     return $result;
   }
 
-  public function BookRoomManually($roomnumber, $room_cost, $days)
+  public function BookRoomManually($booker,$roomnumber, $room_cost, $days)
   {
-    $sql = "INSERT INTO `room_bookings` (room_id,user_id,arrival_date,departure_date,room_cost)
-    VALUES ({$roomnumber},0,DATE(NOW()),DATE_ADD((DATE(NOW())), INTERVAL {$days} DAY),{$room_cost});";
+    $sql = "INSERT INTO `room_bookings` (booker,room_id,user_id,arrival_date,departure_date,room_cost)
+    VALUES ('{$booker}',{$roomnumber},0,DATE(NOW()),DATE_ADD((DATE(NOW())), INTERVAL {$days} DAY),{$room_cost});";
 
     if ($this->con->query($sql) === TRUE) {
       echo "<script>
@@ -284,8 +284,8 @@ class Cashiering
       </script>";
       } else {
 
-        $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
-                  VALUES ({$id}, '{$roomname}', {$row['room_cost']}, 1, 'room');";
+        $addsql = "INSERT INTO `payments` (`booker_name`,`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`)
+                  VALUES ('{$row['booker']}',{$id}, '{$roomname}', {$row['room_cost']}, 1, 'room');";
         $updatesql = "UPDATE `room_bookings` SET payment = 2 WHERE id = {$id};";
         if ($this->con->query($addsql) === TRUE) {
           if ($this->con->query($updatesql) === TRUE) {
@@ -341,17 +341,16 @@ class Cashiering
 
   public function UpdateRoomPayment($id, $payment, $roombookingid, $balance)
   {
-    $sql = "SELECT * FROM `room_bookings` WHERE `id` = " . $roombookingid . ";";
-    $result = mysqli_query($this->con, $sql);
-
-    $row = mysqli_fetch_assoc($result);
     if ($balance > $payment) {
       echo "<script>
     alert('Payment Should be larger or equal to the price is selected.');
     window.location.href='room.php';
     </script>";
     } else {
-
+      $sql = "SELECT * FROM `room_bookings` WHERE `id` = " . $roombookingid . ";";
+      $result = mysqli_query($this->con, $sql);
+   
+      $row = mysqli_fetch_assoc($result);
       $updatesql = "UPDATE `payments` SET amount = {$row['room_cost']}, payment_type = 1, remaining_balance = 0 WHERE id = {$id};";
       $updatebookingsql = "UPDATE `room_bookings` SET room_cost = {$row['room_cost']}, payment = 2 WHERE id = {$roombookingid};";
       if ($this->con->query($updatesql) === TRUE) {

@@ -10,7 +10,7 @@ $cashiering->setDb($conn);
 
 <head>
     <script language="javascript" type="text/javascript">
-        window.history.forward();
+    window.history.forward();
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -56,7 +56,8 @@ $cashiering->setDb($conn);
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="table" class="table table-hover data-table" style="width: 100%">
-                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add Order</button>
+                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()"
+                            style="background-color: #064663; width: full-width">Add Order</button>
                         <!-- Modal HTML -->
                         <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                             <div class="modal-dialog">
@@ -71,14 +72,17 @@ $cashiering->setDb($conn);
                                             <div class="form-row">
                                                 <div class="col-md-12 mb-2">
                                                     <label for="event_name">Customer Name:</label>
-                                                    <input type="text" class="form-control" id="customer_name" name="customer_name" autocomplete="off" placeholder="Enter Customer Name" required>
+                                                    <input type="text" class="form-control" id="customer_name"
+                                                        name="customer_name" autocomplete="off"
+                                                        placeholder="Enter Customer Name" required>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Cancel</button>
                                                 <button class="btn btn-success" name="addOrder">Save</button>
                                             </div>
                                         </form>
@@ -100,24 +104,32 @@ $cashiering->setDb($conn);
                                     <th>Customer Name</th>
                                     <th>Amount</th>
                                     <th>Ordered On</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php $test = $cashiering->GetAllFoodOrders();
                                 $total_price = 0;
                                 while ($rows = (mysqli_fetch_assoc($test))) { ?>
-                                    <tr>
-                                        <td>
-                                            <?php echo $rows['customer_name'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "₱" . $rows['total_amount'];
+                                <tr>
+                                    <td>
+                                        <?php echo $rows['customer_name'] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo "₱" . $rows['total_amount'];
                                             $total_price += $rows['total_amount']; ?>
-                                        </td>
-                                        <td>
-                                            <?php echo date("M d,Y", strtotime($rows['transdate'])); ?>
-                                        </td>
-                                    </tr>
+                                    </td>
+                                    <td>
+                                        <?php echo date("M d,Y", strtotime($rows['transdate'])); ?>
+                                    </td>
+                                    <td>
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href=<?php echo "generate_food_receipt.php?id={$rows['id']}" ?>
+                                                target="_blank" class="btn btn-primary btn-sm me-md-2"><span
+                                                    class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php } ?>
                             </tbody>
                             <tfoot>
@@ -144,11 +156,11 @@ $cashiering->setDb($conn);
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $("#myBtn").click(function() {
-                $("#myModal").modal("toggle");
-            });
+    $(document).ready(function() {
+        $("#myBtn").click(function() {
+            $("#myModal").modal("toggle");
         });
+    });
     </script>
 
 </body>

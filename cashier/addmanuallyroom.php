@@ -161,7 +161,7 @@ $cashiering->setDb($conn);
                                                         </form>
                                                         <?php
                                                         if (array_key_exists('submit', $_POST)) {
-                                                            $cashiering->BookRoomManually($_POST['booker'],$_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
+                                                            $cashiering->BookRoomManually($_POST['booker'], $_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
                                                             unset($_POST);
                                                         }
                                                         ?>
@@ -215,13 +215,14 @@ $cashiering->setDb($conn);
             if (total_guest <= max_guests) {
                 total = payment * days;
                 $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
-                $row.find('#total_cost').val(total);
+                $row.find('#total_cost').val("9238");
             } else {
                 var number_of_exceeding_guests = total_guest - max_guests;
                 if (number_of_exceeding_guests > max_exceeding_guets) {
                     labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
                 } else {
                     total = (payment * days) + (number_of_exceeding_guests * 150);
+                    $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                     $row.find('#total_cost').val(total);
                 }
             }

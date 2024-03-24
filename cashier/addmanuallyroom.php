@@ -149,7 +149,7 @@ $cashiering->setDb($conn);
                                                                 <div class="form-group">
                                                                     <label>Payment Amount</label>
                                                                     <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" disabled>
-                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off" hidden>
+                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off">
                                                                 </div>
                                                                 <label style="color: red" id="error<?php echo $rows['id']; ?>" name="error"></label>
                                                             </div>
@@ -215,7 +215,7 @@ $cashiering->setDb($conn);
             if (total_guest <= max_guests) {
                 total = payment * days;
                 $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
-                $row.find('#total_cost').val("9238");
+                $row.find('#total_cost').val(total);
             } else {
                 var number_of_exceeding_guests = total_guest - max_guests;
                 if (number_of_exceeding_guests > max_exceeding_guets) {

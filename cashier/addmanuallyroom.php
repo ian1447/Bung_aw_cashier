@@ -221,7 +221,7 @@ $cashiering->setDb($conn);
                 if (number_of_exceeding_guests > max_exceeding_guets) {
                     labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
                 } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 150);
+                    total = (payment * days) + (number_of_exceeding_guests * 250);
                     $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                     $row.find('#total_cost').val(total);
                 }
@@ -251,7 +251,7 @@ $cashiering->setDb($conn);
                 if (number_of_exceeding_guests > max_exceeding_guets) {
                     labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
                 } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 150);
+                    total = (payment * days) + (number_of_exceeding_guests * 250);
                     $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                     $row.find('#total_cost').val(total);
                 }
@@ -281,7 +281,7 @@ $cashiering->setDb($conn);
                 if (number_of_exceeding_guests > max_exceeding_guets) {
                     labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
                 } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 150);
+                    total = (payment * days) + (number_of_exceeding_guests * 250);
                     $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                     $row.find('#total_cost').val(total);
                 }

@@ -219,7 +219,7 @@ $cashiering->setDb($conn);
             var no_of_children = parseFloat($('#no_of_children').val());
             var total = (no_of_children * 50) + (no_of_adults * 100);
             var payment_amount = parseFloat($(this).val());
-            var change = total - payment_amount;
+            var change = payment_amount - total;
             $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
         });
     </script>

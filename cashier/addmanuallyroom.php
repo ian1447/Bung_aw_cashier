@@ -149,7 +149,7 @@ $cashiering->setDb($conn);
                                                                 <div class="form-group">
                                                                     <label>Payment Amount</label>
                                                                     <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" disabled>
-                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off">
+                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off" hidden>
                                                                 </div>
                                                                 <label style="color: red" id="error<?php echo $rows['id']; ?>" name="error"></label>
                                                             </div>

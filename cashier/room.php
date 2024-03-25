@@ -62,6 +62,7 @@ $cashiering->setDb($conn);
                             <thead class>
                                 <tr>
                                     <th>Room Name</th>
+                                    <th>Booker Name</th>
                                     <th>Amount Paid</th>
                                     <th>Remaining Balance</th>
                                     <th>Paid on</th>
@@ -76,6 +77,9 @@ $cashiering->setDb($conn);
                                 <tr>
                                     <td>
                                         <?php echo $rows["item_name"] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $rows["booker_name"] ?>
                                     </td>
                                     <td>
                                         <?php echo "₱" . $rows["amount"]; $total_price += $rows["amount"]; ?>

@@ -73,6 +73,7 @@ $cashiering->setDb($conn);
                             <thead class>
                                 <tr>
                                     <th>Room Type</th>
+                                    <th>Booker</th>
                                     <th>Room Number</th>
                                     <th>Arrival Date</th>
                                     <th>Departure Date</th>
@@ -86,6 +87,9 @@ $cashiering->setDb($conn);
                                     <tr>
                                         <td>
                                             <?php echo $rows['name'] ?>
+                                        </td>
+                                        <td>
+                                            <?php echo $rows['booker'] ?>
                                         </td>
                                         <td>
                                             <?php echo $rows['room_number'] ?>

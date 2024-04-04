@@ -136,18 +136,29 @@ class Cashiering
 
   public function SaveEvents($bookername, $eventname, $eventvenue, $description, $capacity, $date, $price)
   {
-    $add_event = "INSERT INTO `events` (`booker_name`,`name`,`venue`,`description`,`date`,`price`,`capacity`,`status`)
+    $checker = "SELECT COUNT(*) as `count` FROM `events` WHERE `date` = '$date'; ";
+    $checkerresult = mysqli_query($this->con, $checker);
+
+    $checkerrow = mysqli_fetch_assoc($checkerresult);
+    if ($checkerrow['count'] == 0) {
+      $add_event = "INSERT INTO `events` (`booker_name`,`name`,`venue`,`description`,`date`,`price`,`capacity`,`status`)
                 VALUES ('{$bookername}','{$eventname}','{$eventvenue}','{$description}','{$date}',{$price},{$capacity},0);";
-    if ($this->con->query($add_event) === TRUE) {
-      echo "<script>
+      if ($this->con->query($add_event) === TRUE) {
+        echo "<script>
       alert('Adding of Events Successful');
       window.location.href='events.php';
     </script>";
-    } else {
-      echo "<script>
+      } else {
+        echo "<script>
       alert('Error Adding Events.');
       window.location.href='events.php';
     </script>";
+      }
+    } else {
+      echo "<script>
+    alert('Date already taken.');
+    window.location.href='events.php';
+  </script>";
     }
   }
 
@@ -387,7 +398,7 @@ class Cashiering
 
   public function GetAllEntrance()
   {
-    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,ep.`no_of_senior`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
     JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
     WHERE p.`paid_item_type` = 'entrance' GROUP BY ep.id;";
     $result = mysqli_query($this->con, $sql);
@@ -405,17 +416,17 @@ class Cashiering
     return $result;
   }
 
-  public function AddEntrancePayment($payment, $name, $adults, $children)
+  public function AddEntrancePayment($payment, $name, $adults, $children,$senior)
   {
-    $total = ($adults * 50) + ($children * 20);
+    $total = ($adults * 50) + ($children * 20) + ($senior * 20);
     if ($total > $payment) {
       echo "<script>
     alert('Payment Should be larger or equal to the total amount needed.');
     window.location.href='entrance.php';
     </script>";
     } else {
-      $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`type`)
-      VALUES ('{$name}', {$adults}, {$children},'entrance');";
+      $event_pool_insert = "INSERT INTO `entrance_and_pool` (`name`,`no_of_adults`,`no_of_children`,`no_of_senior`,`type`)
+      VALUES ('{$name}', {$adults}, {$children},{$senior},'entrance');";
 
       $payments_add = "INSERT INTO `payments` (`booker_name`,`item_name`,`amount`,`paid_item_type`,`item_id`) 
       VALUES ('{$name}','Entrance',{$total},'entrance',(SELECT id FROM `entrance_and_pool` WHERE `type`= 'entrance' ORDER BY id DESC LIMIT 1));";

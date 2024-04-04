@@ -97,6 +97,15 @@ $cashiering->setDb($conn);
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
+                                                </div> 
+                                                <div class="col-md-12 mb-2">
+                                                    <label for="event_description">Number of Senior Citizen</label>
+                                                    <input type="Number" class="form-control" id="no_of_senior"
+                                                        name="no_of_senior" autocomplete="off"
+                                                        placeholder="Enter Number of Senior Citizen" required>
+                                                    <div class="valid-feedback">
+                                                        Looks good!
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <label for="no_of_people">Total Amount</label>
@@ -129,7 +138,7 @@ $cashiering->setDb($conn);
                                         </form>
                                         <?php
                                         if (array_key_exists('AddEntrance', $_POST)) {
-                                            $cashiering->AddEntrancePayment($_POST['amount'], $_POST['name'], $_POST['no_of_adults'], $_POST['no_of_children']);
+                                            $cashiering->AddEntrancePayment($_POST['amount'], $_POST['name'], $_POST['no_of_adults'], $_POST['no_of_children'],$_POST['no_of_senior']);
                                             unset($_POST);
                                         }
                                         ?>
@@ -145,6 +154,7 @@ $cashiering->setDb($conn);
                             <th>Name</th>
                             <th>Number of Adults</th>
                             <th>Number of Children</th>
+                            <th>Number of Senior Citizen</th>
                             <th>Amount</th>
                             <th>Paid on</th>
                             <th>Action</th>
@@ -163,6 +173,9 @@ $cashiering->setDb($conn);
                             </td>
                             <td>
                                 <?php echo $rows['no_of_children'] ?>
+                            </td>
+                            <td>
+                                <?php echo $rows['no_of_senior'] ?>
                             </td>
                             <td>
                                 <?php echo $rows['amount'];
@@ -219,23 +232,34 @@ $cashiering->setDb($conn);
     });
     $(document).on('change', '#no_of_adults', function() {
         var no_of_children = $('#no_of_children').val();
+        var no_of_senior = $('#no_of_senior').val();
         no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
         var no_of_adults = parseFloat($(this).val());
-        var total = (no_of_children * 20) + (no_of_adults * 50);
+        var total = (no_of_children * 20) + (no_of_adults * 50) + (no_of_senior * 20);
         $('#total_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
     });
     $(document).on('change', '#no_of_children', function() {
         var no_of_adults = $('#no_of_adults').val();
+        var no_of_senior = $('#no_of_senior').val();
         no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
         var no_of_children = parseFloat($(this).val());
-        var total = (no_of_children * 20) + (no_of_adults * 50);
+        var total = (no_of_children * 20) + (no_of_adults * 50) + (no_of_senior * 20);
+        $('#total_amount').val("    ₱".concat(total.toFixed(2))); // Update the change field in the same row
+    });
+    $(document).on('change', '#no_of_senior', function() {
+        var no_of_adults = $('#no_of_adults').val();
+        var no_of_senior = parseFloat($(this).val());
+        no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
+        var no_of_children = $('#no_of_children').val();
+        var total = (no_of_children * 20) + (no_of_adults * 50) + (no_of_senior * 20);
         $('#total_amount').val("    ₱".concat(total.toFixed(2))); // Update the change field in the same row
     });
     $(document).on('change', '#amount', function() {
         var $row = $('tr'); // Get the closest table row
         var no_of_adults = $('#no_of_adults').val();
+        var no_of_senior = $('#no_of_senior').val();
         var no_of_children = parseFloat($('#no_of_children').val());
-        var total = (no_of_children * 20) + (no_of_adults * 50);
+        var total = (no_of_children * 20) + (no_of_adults * 50) + (no_of_senior * 20);
         var payment_amount = parseFloat($(this).val());
         var change = payment_amount - total;
         $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row

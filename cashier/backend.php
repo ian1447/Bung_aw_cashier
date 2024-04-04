@@ -398,7 +398,7 @@ class Cashiering
 
   public function GetAllEntrance()
   {
-    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,ep.`no_of_senior`,SUM(ep.`no_of_adults`+ep.`no_of_children`) as `total` FROM `payments` p 
+    $sql = "SELECT p.*,ep.`no_of_adults`,ep.`no_of_children`,ep.`no_of_senior`,SUM(ep.`no_of_adults`+ep.`no_of_children`+ep.`no_of_senior`) as `total` FROM `payments` p 
     JOIN `entrance_and_pool` ep ON ep.`id` = p.`item_id`
     WHERE p.`paid_item_type` = 'entrance' GROUP BY ep.id;";
     $result = mysqli_query($this->con, $sql);

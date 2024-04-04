@@ -10,7 +10,7 @@ $cashiering->setDb($conn);
 
 <head>
     <script language="javascript" type="text/javascript">
-        window.history.forward();
+    window.history.forward();
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -72,105 +72,138 @@ $cashiering->setDb($conn);
                             <tbody>
                                 <?php $results = $cashiering->GetAllRoomTypes();
                                 while ($rows = (mysqli_fetch_assoc($results))) { ?>
-                                    <tr>
-                                        <td>
-                                            <?php echo $rows['name'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $rows['description'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $rows['max_adult'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $rows['max_child'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo "₱" . $rows['cost_per_day']  ?>
-                                        </td>
-                                        <td>
-                                            <div class="d-grid gap-2 d-md-flex">
-                                                <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Book Room</a>
-                                            </div>
-                                            <!-- Edit Modal HTML -->
-                                            <div id="edit<?php echo $rows['id']; ?>" class="modal fade">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <form id="update_form" method="POST">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Book Room</h4>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <tr>
+                                    <td>
+                                        <?php echo $rows['name'] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $rows['description'] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $rows['max_adult'] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo $rows['max_child'] ?>
+                                    </td>
+                                    <td>
+                                        <?php echo "₱" . $rows['cost_per_day']  ?>
+                                    </td>
+                                    <td>
+                                        <div class="d-grid gap-2 d-md-flex">
+                                            <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal"
+                                                class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i
+                                                        class="bi bi-pencil"></i></span> Book Room</a>
+                                        </div>
+                                        <!-- Edit Modal HTML -->
+                                        <div id="edit<?php echo $rows['id']; ?>" class="modal fade">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <form id="update_form" method="POST">
+                                                        <div class="modal-header">
+                                                            <h4 class="modal-title">Book Room</h4>
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-hidden="true">&times;</button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group">
+                                                                <input type="number" id="id" name="id"
+                                                                    value="<?php echo $rows['id']; ?>"
+                                                                    class="form-control" autocomplete="off" hidden>
+                                                                <input type="number" id="max_guests" name="max_guests"
+                                                                    value="<?php echo $rows['max_adult']; ?>"
+                                                                    class="form-control" autocomplete="off" hidden>
+                                                                <input type="number" id="max_exceed" name="max_exceed"
+                                                                    value="<?php echo $rows['max_child']; ?>"
+                                                                    class="form-control" autocomplete="off" hidden>
+                                                                <input type="number" id="cost" name="cost"
+                                                                    value="<?php echo $rows['cost_per_day']; ?>"
+                                                                    class="form-control" autocomplete="off" hidden>
                                                             </div>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <input type="number" id="id" name="id" value="<?php echo $rows['id']; ?>" class="form-control" autocomplete="off" hidden>
-                                                                    <input type="number" id="max_guests" name="max_guests" value="<?php echo $rows['max_adult']; ?>" class="form-control" autocomplete="off" hidden>
-                                                                    <input type="number" id="max_exceed" name="max_exceed" value="<?php echo $rows['max_child']; ?>" class="form-control" autocomplete="off" hidden>
-                                                                    <input type="number" id="cost" name="cost" value="<?php echo $rows['cost_per_day']; ?>" class="form-control" autocomplete="off" hidden>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Room Name</label>
-                                                                    <input type="text" value="<?php echo $rows['name'] ?>" class="form-control" autocomplete="off" disabled>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Room Booker</label>
-                                                                    <input type="text" id="booker" name="booker" class="form-control" autocomplete="off" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Room Number</label>
-                                                                    <!-- <input type="text" id="item_price" name="item_price" value="<?php echo $rows['room_cost'] ?>" class="form-control" autocomplete="off"> -->
-                                                                    <select class="form-select" aria-label="Default select example" name="room_number" id="room_number">
-                                                                        <option selected>-- Please Select Room Number --</option>
-                                                                        <?php $RoomNumbersResult = $cashiering->GetAllRoomNumber($rows['id']);
+                                                            <div class="form-group">
+                                                                <label>Room Name</label>
+                                                                <input type="text" value="<?php echo $rows['name'] ?>"
+                                                                    class="form-control" autocomplete="off" disabled>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Room Booker</label>
+                                                                <input type="text" id="booker" name="booker"
+                                                                    class="form-control" autocomplete="off" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Room Number</label>
+                                                                <!-- <input type="text" id="item_price" name="item_price" value="<?php echo $rows['room_cost'] ?>" class="form-control" autocomplete="off"> -->
+                                                                <select class="form-select"
+                                                                    aria-label="Default select example"
+                                                                    name="room_number" id="room_number">
+                                                                    <option selected>-- Please Select Room Number --
+                                                                    </option>
+                                                                    <?php $RoomNumbersResult = $cashiering->GetAllRoomNumber($rows['id']);
                                                                         while ($number = (mysqli_fetch_assoc($RoomNumbersResult))) { ?>
-                                                                            <option value="<?php echo $number['room_number'] ?>"><?php echo $number['room_number'] ?></option>
-                                                                        <?php } ?>
-                                                                        <!-- <option value="1">One</option>
+                                                                    <option
+                                                                        value="<?php echo $number['room_number'] ?>">
+                                                                        <?php echo $number['room_number'] ?></option>
+                                                                    <?php } ?>
+                                                                    <!-- <option value="1">One</option>
                                                                         <option value="2">Two</option>
                                                                         <option value="3">Three</option> -->
-                                                                    </select>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Number of days</label>
-                                                                    <input type="number" id="number_of_days" name="number_of_days" class="form-control" autocomplete="off" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Number of Adults</label>
-                                                                    <input type="number" id="number_of_adults" name="number_of_adults" class="form-control" autocomplete="off" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Number of Children(Above 2 years old)</label>
-                                                                    <input type="number" id="number_of_children" name="number_of_children" class="form-control" autocomplete="off" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Number of Children(Below 2 years old)</label>
-                                                                    <input type="number" id="number_of_children2" name="number_of_children2" class="form-control" autocomplete="off" required>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Payment Amount</label>
-                                                                    <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" disabled>
-                                                                    <input type="text" id="total_cost" name="total_cost" class="form-control" autocomplete="off" hidden>
-                                                                </div>
-                                                                <label style="color: red" id="error<?php echo $rows['id']; ?>" name="error"></label>
+                                                                </select>
                                                             </div>
-                                                            <div class="modal-footer">
-                                                                <input type="hidden" value="2" name="type">
-                                                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                                                <button class="btn btn-info" id="AddPayment" type="submit" name="submit">Book Room</button>
+                                                            <div class="form-group">
+                                                                <label>Number of days</label>
+                                                                <input type="number" id="number_of_days"
+                                                                    name="number_of_days" class="form-control"
+                                                                    autocomplete="off" required>
                                                             </div>
-                                                        </form>
-                                                        <?php
+                                                            <div class="form-group">
+                                                                <label>Number of Adults</label>
+                                                                <input type="number" id="number_of_adults"
+                                                                    name="number_of_adults" class="form-control"
+                                                                    autocomplete="off" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Number of Children(Above 2 years old)</label>
+                                                                <input type="number" id="number_of_children"
+                                                                    name="number_of_children" class="form-control"
+                                                                    autocomplete="off" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Number of Children(Below 2 years old)</label>
+                                                                <input type="number" id="number_of_children2"
+                                                                    name="number_of_children2" class="form-control"
+                                                                    autocomplete="off" required>
+                                                            </div>
+                                                            <div class="form-group">
+                                                                <label>Payment Amount</label>
+                                                                <input type="text" id="payment_amount"
+                                                                    name="payment_amount" class="form-control"
+                                                                    autocomplete="off" disabled>
+                                                                <input type="text" id="total_cost" name="total_cost"
+                                                                    class="form-control" autocomplete="off" hidden>
+                                                            </div>
+                                                            <label style="color: red"
+                                                                id="error<?php echo $rows['id']; ?>"
+                                                                name="error"></label>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <input type="hidden" value="2" name="type">
+                                                            <input type="button" class="btn btn-default"
+                                                                data-dismiss="modal" value="Cancel">
+                                                            <button class="btn btn-info" id="AddPayment" type="submit"
+                                                                name="submit">Book Room</button>
+                                                        </div>
+                                                    </form>
+                                                    <?php
                                                         if (array_key_exists('submit', $_POST)) {
                                                             $cashiering->BookRoomManually($_POST['booker'], $_POST['room_number'], $_POST['total_cost'], $_POST['number_of_days']);
                                                             unset($_POST);
                                                         }
                                                         ?>
-                                                    </div>
                                                 </div>
                                             </div>
-                                            <!-- End of Edit Modal -->
-                                        </td>
-                                    </tr>
+                                        </div>
+                                        <!-- End of Edit Modal -->
+                                    </td>
+                                </tr>
                                 <?php } ?>
                             </tbody>
                     </table>
@@ -192,101 +225,104 @@ $cashiering->setDb($conn);
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $("#myBtn").click(function() {
-                $("#myModal").modal("toggle");
-            });
+    $(document).ready(function() {
+        $("#myBtn").click(function() {
+            $("#myModal").modal("toggle");
         });
-        $(document).on('change', '#number_of_children', function() {
-            var $row = $(this).closest('tr'); // Get the closest table row
-            var id = $row.find('#id').val();
-            let labelElement = document.getElementById("error".concat(id));
-            labelElement.innerHTML = "";
-            var no_of_adults = $row.find('#number_of_adults').val();
-            var max_guests = $row.find('#max_guests').val();
-            var max_exceeding_guets = $row.find('#max_exceed').val();
-            var payment = $row.find('#cost').val();
-            var days = $row.find('#number_of_days').val();
-            days = days === "" ? 0 : parseFloat(days);
-            no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
-            var no_of_children = parseFloat($(this).val());
-            var total_guest = no_of_adults + no_of_children;
-            var error, total;
-            if (total_guest <= max_guests) {
-                total = payment * days;
-                $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
-                $row.find('#total_cost').val(total);
+    });
+    $(document).on('change', '#number_of_children', function() {
+        var $row = $(this).closest('tr'); // Get the closest table row
+        var id = $row.find('#id').val();
+        let labelElement = document.getElementById("error".concat(id));
+        labelElement.innerHTML = "";
+        var no_of_adults = $row.find('#number_of_adults').val();
+        var max_guests = $row.find('#max_guests').val();
+        var max_exceeding_guets = $row.find('#max_exceed').val();
+        var payment = $row.find('#cost').val();
+        var days = $row.find('#number_of_days').val();
+        days = days === "" ? 0 : parseFloat(days);
+        no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
+        var no_of_children = parseFloat($(this).val());
+        var total_guest = no_of_adults + no_of_children;
+        var error, total;
+        if (total_guest <= max_guests) {
+            total = payment * days;
+            $row.find('#payment_amount').val("₱".concat(total.toFixed(
+            2))); // Update the change field in the same row
+            $row.find('#total_cost').val(total);
+        } else {
+            var number_of_exceeding_guests = total_guest - max_guests;
+            if (number_of_exceeding_guests > max_exceeding_guets) {
+                labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
             } else {
-                var number_of_exceeding_guests = total_guest - max_guests;
-                if (number_of_exceeding_guests > max_exceeding_guets) {
-                    labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
-                } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 250);
-                    $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
-                    $row.find('#total_cost').val(total);
-                }
-            }
-        });
-        $(document).on('change', '#number_of_adults', function() {
-            var $row = $(this).closest('tr'); // Get the closest table row
-            var id = $row.find('#id').val();
-            let labelElement = document.getElementById("error".concat(id));
-            labelElement.innerHTML = "";
-            var no_of_adults = parseFloat($(this).val());
-            var max_guests = $row.find('#max_guests').val();
-            var max_exceeding_guets = $row.find('#max_exceed').val();
-            var payment = $row.find('#cost').val();
-            var days = $row.find('#number_of_days').val();
-            var no_of_children = $row.find('#number_of_children').val();
-            no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
-            days = days === "" ? 0 : parseFloat(days);
-            var total_guest = no_of_adults + no_of_children;
-            var error, total;
-            if (total_guest <= max_guests) {
-                total = payment * days;
-                $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+                total = (payment * days) + (number_of_exceeding_guests * 250);
+                $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                 $row.find('#total_cost').val(total);
-            } else {
-                var number_of_exceeding_guests = total_guest - max_guests;
-                if (number_of_exceeding_guests > max_exceeding_guets) {
-                    labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
-                } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 250);
-                    $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
-                    $row.find('#total_cost').val(total);
-                }
             }
-        });
-        $(document).on('change', '#number_of_days', function() {
-            var $row = $(this).closest('tr'); // Get the closest table row
-            var id = $row.find('#id').val();
-            let labelElement = document.getElementById("error".concat(id));
-            labelElement.innerHTML = "";
-            var no_of_adults = $row.find('#number_of_adults').val();
-            var max_guests = $row.find('#max_guests').val();
-            var max_exceeding_guets = $row.find('#max_exceed').val();
-            var payment = $row.find('#cost').val();
-            var days = parseFloat($(this).val());
-            var no_of_children = $row.find('#number_of_children').val();
-            no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
-            days = days === "" ? 0 : parseFloat(days);
-            var total_guest = no_of_adults + no_of_children;
-            var error, total;
-            if (total_guest <= max_guests) {
-                total = payment * days;
-                $row.find('#payment_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+        }
+    });
+    $(document).on('change', '#number_of_adults', function() {
+        var $row = $(this).closest('tr'); // Get the closest table row
+        var id = $row.find('#id').val();
+        let labelElement = document.getElementById("error".concat(id));
+        labelElement.innerHTML = "";
+        var no_of_adults = parseFloat($(this).val());
+        var max_guests = $row.find('#max_guests').val();
+        var max_exceeding_guets = $row.find('#max_exceed').val();
+        var payment = $row.find('#cost').val();
+        var days = $row.find('#number_of_days').val();
+        var no_of_children = $row.find('#number_of_children').val();
+        no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
+        days = days === "" ? 0 : parseFloat(days);
+        var total_guest = no_of_adults + no_of_children;
+        var error, total;
+        if (total_guest <= max_guests) {
+            total = payment * days;
+            $row.find('#payment_amount').val("₱".concat(total.toFixed(
+            2))); // Update the change field in the same row
+            $row.find('#total_cost').val(total);
+        } else {
+            var number_of_exceeding_guests = total_guest - max_guests;
+            if (number_of_exceeding_guests > max_exceeding_guets) {
+                labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
+            } else {
+                total = (payment * days) + (number_of_exceeding_guests * 250);
+                $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
                 $row.find('#total_cost').val(total);
-            } else {
-                var number_of_exceeding_guests = total_guest - max_guests;
-                if (number_of_exceeding_guests > max_exceeding_guets) {
-                    labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
-                } else {
-                    total = (payment * days) + (number_of_exceeding_guests * 250);
-                    $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
-                    $row.find('#total_cost').val(total);
-                }
             }
-        });
+        }
+    });
+    $(document).on('change', '#number_of_days', function() {
+        var $row = $(this).closest('tr'); // Get the closest table row
+        var id = $row.find('#id').val();
+        let labelElement = document.getElementById("error".concat(id));
+        labelElement.innerHTML = "";
+        var no_of_adults = $row.find('#number_of_adults').val();
+        var max_guests = $row.find('#max_guests').val();
+        var max_exceeding_guets = $row.find('#max_exceed').val();
+        var payment = $row.find('#cost').val();
+        var days = parseFloat($(this).val());
+        var no_of_children = $row.find('#number_of_children').val();
+        no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
+        days = days === "" ? 0 : parseFloat(days);
+        var total_guest = no_of_adults + no_of_children;
+        var error, total;
+        if (total_guest <= max_guests) {
+            total = payment * days;
+            $row.find('#payment_amount').val("₱".concat(total.toFixed(
+            2))); // Update the change field in the same row
+            $row.find('#total_cost').val(total);
+        } else {
+            var number_of_exceeding_guests = total_guest - max_guests;
+            if (number_of_exceeding_guests > max_exceeding_guets) {
+                labelElement.innerHTML = "Guests Numbers exceeds total amount of guests.";
+            } else {
+                total = (payment * days) + (number_of_exceeding_guests * 250);
+                $row.find('#payment_amount').val("₱".concat(total.toFixed(2)));
+                $row.find('#total_cost').val(total);
+            }
+        }
+    });
     </script>
 
 </body>

@@ -10,7 +10,7 @@ $cashiering->setDb($conn);
 
 <head>
     <script language="javascript" type="text/javascript">
-        window.history.forward();
+    window.history.forward();
     </script>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -57,7 +57,8 @@ $cashiering->setDb($conn);
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="example" class="table table-hover data-table" style="width: 100%">
-                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Add</button>
+                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()"
+                            style="background-color: #064663; width: full-width">Add</button>
                         <!-- Modal HTML -->
                         <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                             <div class="modal-dialog">
@@ -72,47 +73,58 @@ $cashiering->setDb($conn);
                                             <div class="form-row">
                                                 <div class="col-md-12 mb-2">
                                                     <label for="event_name">Name:</label>
-                                                    <input type="text" class="form-control" id="name" name="name" autocomplete="off" placeholder="Enter Name" required>
+                                                    <input type="text" class="form-control" id="name" name="name"
+                                                        autocomplete="off" placeholder="Enter Name" required>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <label for="event_venue">Number of Adults(Above 13) </label>
-                                                    <input type="number" class="form-control" id="no_of_adults" name="no_of_adults" autocomplete="off" placeholder="Enter Number of Adults" required>
+                                                    <input type="number" class="form-control" id="no_of_adults"
+                                                        name="no_of_adults" autocomplete="off"
+                                                        placeholder="Enter Number of Adults" required>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
-                                                    <label for="event_description">Number of Children (5-12 years old)</label>
-                                                    <input type="Number" class="form-control" id="no_of_children" name="no_of_children" autocomplete="off" placeholder="Enter Number of Children" required>
+                                                    <label for="event_description">Number of Children (5-12 years
+                                                        old)</label>
+                                                    <input type="Number" class="form-control" id="no_of_children"
+                                                        name="no_of_children" autocomplete="off"
+                                                        placeholder="Enter Number of Children" required>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <label for="no_of_people">Total Amount</label>
-                                                    <input type="text" class="form-control" id="total_amount" name="total_amount" autocomplete="off" placeholder="Total Amount" disabled>
+                                                    <input type="text" class="form-control" id="total_amount"
+                                                        name="total_amount" autocomplete="off"
+                                                        placeholder="Total Amount" disabled>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <label for="no_of_people">Amount</label>
-                                                    <input type="number" class="form-control" id="amount" name="amount" autocomplete="off" placeholder="Enter Amount" required>
+                                                    <input type="number" class="form-control" id="amount" name="amount"
+                                                        autocomplete="off" placeholder="Enter Amount" required>
                                                     <div class="valid-feedback">
                                                         Looks good!
                                                     </div>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Change</label>
-                                                    <input type="text" id="change" name="change" class="form-control" autocomplete="off" disabled>
+                                                    <input type="text" id="change" name="change" class="form-control"
+                                                        autocomplete="off" disabled>
                                                 </div>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                                                <button class="btn btn-success" name="AddEntrance">Add</button>
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-dismiss="modal">Cancel</button>
+                                                <button class="btn btn-success" name="AddEntrance">Save</button>
                                             </div>
                                         </form>
                                         <?php
@@ -142,33 +154,35 @@ $cashiering->setDb($conn);
                         <?php $results = $cashiering->GetAllEntrance();
                         $total_price = 0;
                         while ($rows = (mysqli_fetch_assoc($results))) { ?>
-                            <tr>
-                                <td>
-                                    <?php echo $rows['booker_name'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $rows['no_of_adults'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $rows['no_of_children'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $rows['amount'];
+                        <tr>
+                            <td>
+                                <?php echo $rows['booker_name'] ?>
+                            </td>
+                            <td>
+                                <?php echo $rows['no_of_adults'] ?>
+                            </td>
+                            <td>
+                                <?php echo $rows['no_of_children'] ?>
+                            </td>
+                            <td>
+                                <?php echo $rows['amount'];
                                     $total_price +=  $rows['amount'];  ?>
-                                </td>
-                                <td>
-                                    <?php if ( $rows['transdate'] !== null) {?>
-                                    <?php echo date("M d,Y", strtotime($rows['transdate'])); ?>
-                                    <?php } ?>
-                                </td>
-                                <td>
-                                    <?php if ( $rows['amount'] !== null) {?>
-                                    <div class="d-grid gap-2 d-md-flex">
-                                        <a href=<?php echo "generate_receipt.php?type=Entrance&no_of_people={$rows['total']}&amount={$rows['amount']}&item_name={$rows['item_name']}" ?> target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-printer"></i></span> Print Receipt </a>
-                                    </div>
-                                    <?php } ?>
-                                </td>
-                            </tr>
+                            </td>
+                            <td>
+                                <?php if ( $rows['transdate'] !== null) {?>
+                                <?php echo date("M d,Y", strtotime($rows['transdate'])); ?>
+                                <?php } ?>
+                            </td>
+                            <td>
+                                <?php if ( $rows['amount'] !== null) {?>
+                                <div class="d-grid gap-2 d-md-flex">
+                                    <a href=<?php echo "generate_receipt.php?type=Entrance&no_of_people={$rows['total']}&amount={$rows['amount']}&item_name={$rows['item_name']}" ?>
+                                        target="_blank" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i
+                                                class="bi bi-printer"></i></span> Print Receipt </a>
+                                </div>
+                                <?php } ?>
+                            </td>
+                        </tr>
                         <?php } ?>
                     </tbody>
                     <tfoot>
@@ -198,34 +212,34 @@ $cashiering->setDb($conn);
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $("#myBtn").click(function() {
-                $("#myModal").modal("toggle");
-            });
+    $(document).ready(function() {
+        $("#myBtn").click(function() {
+            $("#myModal").modal("toggle");
         });
-        $(document).on('change', '#no_of_adults', function() {
-            var no_of_children = $('#no_of_children').val();
-            no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
-            var no_of_adults = parseFloat($(this).val());
-            var total = (no_of_children * 20) + (no_of_adults * 50);
-            $('#total_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
-        });
-        $(document).on('change', '#no_of_children', function() {
-            var no_of_adults = $('#no_of_adults').val();
-            no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
-            var no_of_children = parseFloat($(this).val());
-            var total = (no_of_children * 20) + (no_of_adults * 50);
-            $('#total_amount').val("    ₱".concat(total.toFixed(2))); // Update the change field in the same row
-        });
-        $(document).on('change', '#amount', function() {
-            var $row = $('tr'); // Get the closest table row
-            var no_of_adults = $('#no_of_adults').val();
-            var no_of_children = parseFloat($('#no_of_children').val());
-            var total = (no_of_children * 20) + (no_of_adults * 50);
-            var payment_amount = parseFloat($(this).val());
-            var change = payment_amount - total;
-            $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
-        });
+    });
+    $(document).on('change', '#no_of_adults', function() {
+        var no_of_children = $('#no_of_children').val();
+        no_of_children = no_of_children === "" ? 0 : parseFloat(no_of_children);
+        var no_of_adults = parseFloat($(this).val());
+        var total = (no_of_children * 20) + (no_of_adults * 50);
+        $('#total_amount').val("₱".concat(total.toFixed(2))); // Update the change field in the same row
+    });
+    $(document).on('change', '#no_of_children', function() {
+        var no_of_adults = $('#no_of_adults').val();
+        no_of_adults = no_of_adults === "" ? 0 : parseFloat(no_of_adults);
+        var no_of_children = parseFloat($(this).val());
+        var total = (no_of_children * 20) + (no_of_adults * 50);
+        $('#total_amount').val("    ₱".concat(total.toFixed(2))); // Update the change field in the same row
+    });
+    $(document).on('change', '#amount', function() {
+        var $row = $('tr'); // Get the closest table row
+        var no_of_adults = $('#no_of_adults').val();
+        var no_of_children = parseFloat($('#no_of_children').val());
+        var total = (no_of_children * 20) + (no_of_adults * 50);
+        var payment_amount = parseFloat($(this).val());
+        var change = payment_amount - total;
+        $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
+    });
     </script>
 
 </body>

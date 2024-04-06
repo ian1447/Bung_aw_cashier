@@ -37,8 +37,7 @@ class Cashiering
       $row = mysqli_fetch_assoc($result);
       echo "<div style='display: grid; grid-template-columns: 1fr 50px 100px; gap: 8px; padding: 4px'>";
       echo "<div>{$row['name']}</div>";
-      // echo "<div><input type='number' class='form-control' onclick='addQuantity({$var['item_id']})' value='1'></div>";
-      echo "<div><input type='number' class='form-control' onclick='addQuantity({$var['item_id']})' value='1'></div>";
+      echo "<div><input type='number' id='quantity_{$var['item_id']}' class='form-control' onChange='addQuantity({$var['item_id']})' value='{$var['qty']}'></div>";
       echo "</div>";
     }
   }
@@ -79,14 +78,14 @@ class Cashiering
     $i = 0;
     $len = count($_SESSION['foodarr']);
     foreach ($_SESSION['foodarr'] as $food) {
-      $sql = "SELECT * FROM `foods` WHERE `id` = " . $food . ";";
+      $sql = "SELECT * FROM `foods` WHERE `id` = " . $food['item_id'] . ";";
       $result = mysqli_query($this->con, $sql);
 
       $row = mysqli_fetch_assoc($result);
-
+      $price = $food['qty'] * $row['price'];
       $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
-                  VALUES ({$food},1,{$row['price']},NOW(),{$_SESSION['bulkid']});";
-      $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$row['price']} WHERE id = {$_SESSION['bulkid']};";
+                  VALUES ({$food['item_id']},{$food['qty']},{$price},NOW(),{$_SESSION['bulkid']});";
+      $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$price} WHERE id = {$_SESSION['bulkid']};";
       if ($this->con->query($food_order) === TRUE) {
         if ($this->con->query($update_food_bulk) === FALSE) {
           echo "<script>

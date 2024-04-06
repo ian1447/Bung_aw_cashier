@@ -184,6 +184,21 @@ $cashiering->setDb($conn);
                 $("#myModal2").modal("toggle");
             });
         });
+        function addQuantity(itemId) {
+            var quantity = document.getElementById('quantity_' + itemId).value;
+            console.log(quantity);
+            // Send AJAX request to update session variable
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', 'update_quantity.php', true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    // Handle response if needed
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send('item_id=' + itemId + '&quantity=' + quantity);
+        }
     </script>
 
 </body>

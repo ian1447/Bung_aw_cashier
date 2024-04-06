@@ -127,7 +127,7 @@ $cashiering->setDb($conn);
                                         </form>
                                         <?php
                                         if (array_key_exists('AddEvent', $_POST)) {
-                                            $cashiering->SaveEvents($_POST['booker_name'],$_POST['event_name'], $_POST['event_venue'], $_POST['event_description'], $_POST['no_of_people'], $_POST['date_of_use'], $_POST['amount']);
+                                            $cashiering->SaveEvents($_POST['booker_name'], $_POST['event_name'], $_POST['event_venue'], $_POST['event_description'], $_POST['no_of_people'], $_POST['date_of_use'], $_POST['amount']);
                                             unset($_POST);
                                         }
                                         ?>

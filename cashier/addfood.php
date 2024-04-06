@@ -58,7 +58,7 @@ $cashiering->setDb($conn);
                 <div class="form-group">
                     <label>Item Count:</label>
                     <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
-                    <button class="btn btn text-white m-lg-2" id="myBtn2" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
+                    <button class="btn btn text-white m-lg-2" id="resetBtn"  style="background-color: #556B2F" name="reset_button">Clear Orders</button>
                     <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View Orders</button>
                     <?php
 if (array_key_exists('finalize', $_POST)) {
@@ -123,7 +123,7 @@ if (array_key_exists('add_to_order', $_POST)) {
         </div>
         <!-- Second Modal -->
         <div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-            <div class="modal-dialog modal-xl">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLabel2">Ordered Items</h5>
@@ -158,16 +158,6 @@ if (array_key_exists('add_to_order', $_POST)) {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <script>
-        function addToOrder(itemId) {
-            // Add the item to the orders array
-            <?php $rows = mysqli_fetch_assoc($cashiering->GetAllFoodItems());?>
-            <?php array_push($_SESSION['foodarr'], $rows['id']);?>
-            // Update the item count
-            document.getElementById('item_count').value = <?php echo count($_SESSION['foodarr']); ?>;
-        }
-    </script>
     <script>
         $(document).ready(function() {
             $("#myBtn").click(function() {

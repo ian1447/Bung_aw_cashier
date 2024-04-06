@@ -31,28 +31,31 @@ class Cashiering
   public function ViewOrders()
   {
     echo "<h5>Item Name</h5>";
-    foreach($_SESSION['foodarr'] as $var)
-    {
-      $sql = "SELECT * FROM `foods` WHERE id = $var;";
+    foreach ($_SESSION['foodarr'] as $var) {
+      $sql = "SELECT * FROM `foods` WHERE id = {$var['item_id']};";
       $result = mysqli_query($this->con, $sql);
       $row = mysqli_fetch_assoc($result);
       echo "<div style='display: grid; grid-template-columns: 1fr 50px 100px; gap: 8px; padding: 4px'>";
       echo "<div>{$row['name']}</div>";
-      echo "<div><input type='number' class='form-control' onclick='addQuantity($var)' value='1'></div>";
-      echo "<div><button class='btn btn-outline-danger' onclick='deleteItem($var)'>Delete</button></div>";
+      // echo "<div><input type='number' class='form-control' onclick='addQuantity({$var['item_id']})' value='1'></div>";
+      echo "<div><input type='number' class='form-control' onclick='addQuantity({$var['item_id']})' value='1'></div>";
       echo "</div>";
     }
   }
-  
-  public function deleteItem($itemId) {
+
+  public function deleteItem($itemId)
+  {
     // Implement the logic to delete the item
     // For demonstration purposes, let's remove it from the session array
-    $key = array_search($itemId, $_SESSION['foodarr']);
+    $key = array_search($itemId, array_column($_SESSION['foodarr'], 'item_id'));
     if ($key !== false) {
-        unset($_SESSION['foodarr'][$key]);
-        // Reset array keys
-        $_SESSION['foodarr'] = array_values($_SESSION['foodarr']);
+      unset($_SESSION['foodarr'][$key]);
+      // Reset array keys
+      $_SESSION['foodarr'] = array_values($_SESSION['foodarr']);
     }
+    echo "<script>
+    window.location.href='addfood.php';
+  </script>";
   }
 
   public function FoodAddOrder($customerName)
@@ -443,7 +446,7 @@ class Cashiering
     return $result;
   }
 
-  public function AddEntrancePayment($payment, $name, $adults, $children,$senior)
+  public function AddEntrancePayment($payment, $name, $adults, $children, $senior)
   {
     $total = ($adults * 50) + ($children * 20) + ($senior * 20);
     if ($total > $payment) {

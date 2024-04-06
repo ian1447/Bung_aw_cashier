@@ -27,9 +27,9 @@ $cashiering->setDb($conn);
 <body class="fixed-left">
 
     <!-- Top Bar Start -->
-    <?php include 'includes/navbar.php';?>
+    <?php include 'includes/navbar.php'; ?>
     <!-- ========== Left Sidebar Start ========== -->
-    <?php include 'includes/sidebar.php';?>
+    <?php include 'includes/sidebar.php'; ?>
     <!-- Left Sidebar End -->
 
     <main class="mt-5 pt-3 px-4">
@@ -58,14 +58,15 @@ $cashiering->setDb($conn);
                 <div class="form-group">
                     <label>Item Count:</label>
                     <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
-                    <button class="btn btn text-white m-lg-2" id="resetBtn"  style="background-color: #556B2F" name="reset_button">Clear Orders</button>
-                    <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View Orders</button>
+                    <button class="btn btn text-white m-lg-2" id="resetBtn" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
+                    <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View
+                        Orders</button>
                     <?php
-if (array_key_exists('finalize', $_POST)) {
-    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-    unset($_POST);
-}
-?>
+                    if (array_key_exists('finalize', $_POST)) {
+                        $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                        unset($_POST);
+                    }
+                    ?>
                 </div>
                 <div class="table-responsive">
                     <table id="example" class="table table-hover data-table" style="width: 100%">
@@ -81,7 +82,7 @@ if (array_key_exists('finalize', $_POST)) {
                             <tbody>
                                 <form method="POST">
                                     <?php $results = $cashiering->GetAllFoodItems();
-while ($rows = (mysqli_fetch_assoc($results))) {?>
+                                    while ($rows = (mysqli_fetch_assoc($results))) { ?>
                                         <tr>
                                             <td>
                                                 <?php echo $rows['type'] ?>
@@ -98,7 +99,7 @@ while ($rows = (mysqli_fetch_assoc($results))) {?>
                                                 </div>
                                             </td>
                                         </tr>
-                                    <?php }?>
+                                    <?php } ?>
                                     <tr>
                                         <td colspan="4">
                                             <input type="submit" class="btn btn-info" name="add_to_order" value="Add to Order">
@@ -110,15 +111,19 @@ while ($rows = (mysqli_fetch_assoc($results))) {?>
                     </table>
                 </div>
                 <?php
-if (array_key_exists('add_to_order', $_POST)) {
-    foreach ($_POST['selected_items'] as $item_id) {
-        array_push($_SESSION['foodarr'], $item_id);
-    }
-    echo "<script>
-                                        window.location.href='addfood.php';
-                                        </script>";
-}
-?>
+                if (array_key_exists('add_to_order', $_POST)) {
+                    foreach ($_POST['selected_items'] as $item_id) {
+                        $item_data = array(
+                            'item_id' => $item_id,
+                            'qty' => 1
+                        );
+                        array_push($_SESSION['foodarr'], $item_data);
+                    }
+                    echo "<script>
+                        window.location.href='addfood.php';
+                        </script>";
+                }
+                ?>
             </div>
         </div>
         <!-- Second Modal -->
@@ -131,13 +136,13 @@ if (array_key_exists('add_to_order', $_POST)) {
                     </div>
                     <div class="modal-body">
                         <ul id="orderedItemsList"></ul>
-                        <?php $results = $cashiering->ViewOrders();?>
+                        <?php $results = $cashiering->ViewOrders(); ?>
                     </div>
                     <div class="modal-footer">
-                    <form method="POST">
-                        <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
-
-                    </form>
+                        <form method="POST">
+                            <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize
+                                Order</button>
+                        </form>
                         <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
                     </div>
                 </div>
@@ -174,24 +179,11 @@ if (array_key_exists('add_to_order', $_POST)) {
     </script>
 
     <script>
-         $(document).ready(function() {
+        $(document).ready(function() {
             $("#myBtn2").click(function() {
                 $("#myModal2").modal("toggle");
             });
         });
-        document.addEventListener('DOMContentLoaded', function() {
-        var myModal2 = document.getElementById('myModal2');
-        myModal2.addEventListener('show.bs.modal', function(event) {
-            var orderedItemsList = document.getElementById('orderedItemsList');
-            orderedItemsList.innerHTML = ''; // Clear previous content
-            <?php foreach ($_SESSION['foodarr'] as $item_id): ?>
-                <?php $item = $cashiering->GetFoodItemById($item_id);?>
-                var li = document.createElement('li');
-                li.textContent = '<?php echo $item['name']; ?> - $<?php echo $item['price']; ?>';
-                orderedItemsList.appendChild(li);
-            <?php endforeach;?>
-        });
-    });
     </script>
 
 </body>

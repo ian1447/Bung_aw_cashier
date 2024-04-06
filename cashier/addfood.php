@@ -27,9 +27,9 @@ $cashiering->setDb($conn);
 <body class="fixed-left">
 
     <!-- Top Bar Start -->
-    <?php include('includes/navbar.php'); ?>
+    <?php include 'includes/navbar.php';?>
     <!-- ========== Left Sidebar Start ========== -->
-    <?php include('includes/sidebar.php'); ?>
+    <?php include 'includes/sidebar.php';?>
     <!-- Left Sidebar End -->
 
     <main class="mt-5 pt-3 px-4">
@@ -50,112 +50,74 @@ $cashiering->setDb($conn);
         <!-- end of header -->
 
         <div class="card shadow-lg">
-            <div class="card-header">
-                <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
+    <div class="card-header">
+        <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <label>Item Count:</label>
+            <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
+            <button class="btn btn text-white m-lg-2" id="myBtn2" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
+            <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View Orders</button>
+            <?php
+                if (array_key_exists('finalize', $_POST)) {
+                    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                    unset($_POST);
+                }
+            ?>
+        </div>
+        <div class="table-responsive">
+            <table id="example" class="table table-hover data-table" style="width: 100%">
+                <div class="m-2">
+                    <thead>
+                        <tr>
+                            <th>Food Type</th>
+                            <th>Food Name</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $results = $cashiering->GetAllFoodItems();
+                        while ($rows = (mysqli_fetch_assoc($results))) {?>
+                            <tr onclick="addToOrder(<?php echo $rows['id']; ?>)">
+                                <td>
+                                    <?php echo $rows['type'] ?>
+                                </td>
+                                <td>
+                                    <?php echo $rows['name'] ?>
+                                </td>
+                                <td>
+                                    <?php echo $rows['price'] ?>
+                                </td>
+                            </tr>
+                        <?php }?>
+                    </tbody>
+                </div>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Second Modal -->
+<div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel2">Ordered Items</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="card-body">
-
-                <div class="form-group">
-                    <label>Item Count:</label>
-                    <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"])?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
-                    <form method="POST">
-                        <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
-                    </form>
-                    <?php
-                    if (array_key_exists('finalize', $_POST)) {
-                        $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                        unset($_POST);
-                    }
-                    ?>
-                </div>
-                <div class="table-responsive">
-                    <table id="example" class="table table-hover data-table" style="width: 100%">
-                        <div class="m-2">
-                            <thead class>
-                                <tr>
-                                    <th>Food Type</th>
-                                    <th>Food Name</th>
-                                    <th>Amount</th>
-                                    <th>Action</th>
-
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $results = $cashiering->GetAllFoodItems();
-                                while ($rows = (mysqli_fetch_assoc($results))) { ?>
-                                    <tr>
-                                        <td>
-                                            <?php echo $rows['type'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $rows['name'] ?>
-                                        </td>
-                                        <td>
-                                            <?php echo $rows['price']  ?>
-                                        </td>
-                                        <td>
-                                            <div class="d-grid gap-2 d-md-flex">
-                                                <a href="#edit<?php echo $rows['id']; ?>" data-toggle="modal" class="btn btn-primary btn-sm me-md-2"><span class="me-2"><i class="bi bi-pencil"></i></span> Buy</a>
-                                            </div>
-                                            <!-- Edit Modal HTML -->
-                                            <div id="edit<?php echo $rows['id']; ?>" class="modal fade">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <form id="update_form" method="POST">
-                                                            <div class="modal-header">
-                                                                <h4 class="modal-title">Add Payment</h4>
-                                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="form-group">
-                                                                    <input type="text" id="item_id" name="item_id" value="<?php echo $rows['id'] ?>" class="form-control" autocomplete="off" hidden>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Item Name</label>
-                                                                    <input type="text" id="item_name" name="item_name" value="<?php echo $rows['name'] ?>" class="form-control" autocomplete="off" disabled>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Item Price</label>
-                                                                    <input type="text" id="item_price" name="item_price" value="<?php echo $rows['price'] ?>" class="form-control" autocomplete="off" disabled>
-                                                                </div>
-                                                                <!-- <div class="form-group">
-                                                                    <label>Payment Amount</label>
-                                                                    <input type="text" id="payment_amount" name="payment_amount" class="form-control" autocomplete="off" hidden>
-                                                                </div>
-                                                                <div class="form-group">
-                                                                    <label>Change</label>
-                                                                    <input type="text" id="change" name="change" class="form-control" autocomplete="off" hidden>
-                                                                </div> -->
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <input type="hidden" value="2" name="type">
-                                                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-                                                                <button class="btn btn-info" id="AddPayment" type="submit" name="submit">Add to Order</button>
-                                                            </div>
-                                                        </form>
-                                                        <?php
-                                                        if (array_key_exists('submit', $_POST)) {
-                                                            //$cashiering->SaveFoodPayment($_POST['item_id']);
-                                                            array_push($_SESSION['foodarr'], $_POST['item_id']);
-                                                            unset($_POST);
-                                                            echo "<script>
-                                                            window.location.href='addfood.php';
-                                                            </script>";
-                                                        }
-                                                        ?>
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <!-- End of Edit Modal -->
-                                        </td>
-                                    </tr>
-                                <?php } ?>
-                            </tbody>
-                    </table>
-                </div>
+            <div class="modal-body">
+                <ul id="orderedItemsList"></ul>
+                <?php $results = $cashiering->ViewOrders();?>
+            </div>
+            <div class="modal-footer">
+                <form method="POST">
+                    <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
+                </form>
             </div>
         </div>
+    </div>
+</div>
+
     </main>
 
     <script src="./js/bootstrap.bundle.min.js"></script>
@@ -170,6 +132,16 @@ $cashiering->setDb($conn);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function addToOrder(itemId) {
+            // Add the item to the orders array
+            <?php $rows = mysqli_fetch_assoc($cashiering->GetAllFoodItems()); ?>
+            <?php array_push($_SESSION['foodarr'], $rows['id']); ?>
+            // Update the item count
+            document.getElementById('item_count').value = <?php echo count($_SESSION['foodarr']); ?>;
+        }
+    </script>
     <script>
         $(document).ready(function() {
             $("#myBtn").click(function() {
@@ -183,6 +155,27 @@ $cashiering->setDb($conn);
             var change = payment_amount - item_price;
             $row.find('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
         });
+    </script>
+
+    <script>
+         $(document).ready(function() {
+            $("#myBtn2").click(function() {
+                $("#myModal2").modal("toggle");
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+        var myModal2 = document.getElementById('myModal2');
+        myModal2.addEventListener('show.bs.modal', function(event) {
+            var orderedItemsList = document.getElementById('orderedItemsList');
+            orderedItemsList.innerHTML = ''; // Clear previous content
+            <?php foreach ($_SESSION['foodarr'] as $item_id): ?>
+                <?php $item = $cashiering->GetFoodItemById($item_id);?>
+                var li = document.createElement('li');
+                li.textContent = '<?php echo $item['name']; ?> - $<?php echo $item['price']; ?>';
+                orderedItemsList.appendChild(li);
+            <?php endforeach;?>
+        });
+    });
     </script>
 
 </body>

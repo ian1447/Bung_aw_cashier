@@ -50,73 +50,99 @@ $cashiering->setDb($conn);
         <!-- end of header -->
 
         <div class="card shadow-lg">
-    <div class="card-header">
-        <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
-    </div>
-    <div class="card-body">
-        <div class="form-group">
-            <label>Item Count:</label>
-            <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
-            <button class="btn btn text-white m-lg-2" id="myBtn2" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
-            <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View Orders</button>
-            <?php
-                if (array_key_exists('finalize', $_POST)) {
-                    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                    unset($_POST);
-                }
-            ?>
-        </div>
-        <div class="table-responsive">
-            <table id="example" class="table table-hover data-table" style="width: 100%">
-                <div class="m-2">
-                    <thead>
-                        <tr>
-                            <th>Food Type</th>
-                            <th>Food Name</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php $results = $cashiering->GetAllFoodItems();
-                        while ($rows = (mysqli_fetch_assoc($results))) {?>
-                            <tr onclick="addToOrder(<?php echo $rows['id']; ?>)">
-                                <td>
-                                    <?php echo $rows['type'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $rows['name'] ?>
-                                </td>
-                                <td>
-                                    <?php echo $rows['price'] ?>
-                                </td>
-                            </tr>
-                        <?php }?>
-                    </tbody>
+            <div class="card-header">
+                <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
+            </div>
+            <div class="card-body">
+
+                <div class="form-group">
+                    <label>Item Count:</label>
+                    <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
+                    <button class="btn btn text-white m-lg-2" id="myBtn2" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
+                    <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View Orders</button>
+                    <?php
+if (array_key_exists('finalize', $_POST)) {
+    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+    unset($_POST);
+}
+?>
                 </div>
-            </table>
+                <div class="table-responsive">
+                    <table id="example" class="table table-hover data-table" style="width: 100%">
+                        <div class="m-2">
+                            <thead>
+                                <tr>
+                                    <th>Food Type</th>
+                                    <th>Food Name</th>
+                                    <th>Amount</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <form method="POST">
+                                    <?php $results = $cashiering->GetAllFoodItems();
+while ($rows = (mysqli_fetch_assoc($results))) {?>
+                                        <tr>
+                                            <td>
+                                                <?php echo $rows['type'] ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $rows['name'] ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $rows['price'] ?>
+                                            </td>
+                                            <td>
+                                                <div class="d-grid gap-2 d-md-flex">
+                                                    <input type="checkbox" name="selected_items[]" value="<?php echo $rows['id']; ?>" />
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php }?>
+                                    <tr>
+                                        <td colspan="4">
+                                            <input type="submit" class="btn btn-info" name="add_to_order" value="Add to Order">
+                                        </td>
+                                    </tr>
+                                </form>
+                            </tbody>
+                        </div>
+                    </table>
+                </div>
+                <?php
+if (array_key_exists('add_to_order', $_POST)) {
+    foreach ($_POST['selected_items'] as $item_id) {
+        array_push($_SESSION['foodarr'], $item_id);
+    }
+    echo "<script>
+                                        window.location.href='addfood.php';
+                                        </script>";
+}
+?>
+            </div>
         </div>
-    </div>
-</div>
-<!-- Second Modal -->
-<div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel2">Ordered Items</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <ul id="orderedItemsList"></ul>
-                <?php $results = $cashiering->ViewOrders();?>
-            </div>
-            <div class="modal-footer">
-                <form method="POST">
-                    <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
-                </form>
+        <!-- Second Modal -->
+        <div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel2">Ordered Items</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <ul id="orderedItemsList"></ul>
+                        <?php $results = $cashiering->ViewOrders();?>
+                    </div>
+                    <div class="modal-footer">
+                    <form method="POST">
+                        <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize Order</button>
+
+                    </form>
+                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
     </main>
 
@@ -136,8 +162,8 @@ $cashiering->setDb($conn);
     <script>
         function addToOrder(itemId) {
             // Add the item to the orders array
-            <?php $rows = mysqli_fetch_assoc($cashiering->GetAllFoodItems()); ?>
-            <?php array_push($_SESSION['foodarr'], $rows['id']); ?>
+            <?php $rows = mysqli_fetch_assoc($cashiering->GetAllFoodItems());?>
+            <?php array_push($_SESSION['foodarr'], $rows['id']);?>
             // Update the item count
             document.getElementById('item_count').value = <?php echo count($_SESSION['foodarr']); ?>;
         }

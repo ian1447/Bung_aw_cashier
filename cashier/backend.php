@@ -70,26 +70,28 @@ class Cashiering
     $i = 0;
     $len = count($_SESSION['foodarr']);
     foreach ($_SESSION['foodarr'] as $food) {
-      $sql = "SELECT * FROM `foods` WHERE `id` = " . $food['item_id'] . ";";
-      $result = mysqli_query($this->con, $sql);
+      if ($food['qty'] != 0) {
+        $sql = "SELECT * FROM `foods` WHERE `id` = " . $food['item_id'] . ";";
+        $result = mysqli_query($this->con, $sql);
 
-      $row = mysqli_fetch_assoc($result);
-      $price = $food['qty'] * $row['price'];
-      $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
+        $row = mysqli_fetch_assoc($result);
+        $price = $food['qty'] * $row['price'];
+        $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
                   VALUES ({$food['item_id']},{$food['qty']},{$price},NOW(),{$_SESSION['bulkid']});";
-      $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$price} WHERE id = {$_SESSION['bulkid']};";
-      if ($this->con->query($food_order) === TRUE) {
-        if ($this->con->query($update_food_bulk) === FALSE) {
-          echo "<script>
+        $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$price} WHERE id = {$_SESSION['bulkid']};";
+        if ($this->con->query($food_order) === TRUE) {
+          if ($this->con->query($update_food_bulk) === FALSE) {
+            echo "<script>
           alert('Error Updating Food.');
           window.location.href='addfood.php';
           </script>";
-        }
-      } else {
-        echo "<script>
+          }
+        } else {
+          echo "<script>
           alert('Error Adding Food Order.');
           window.location.href='addfood.php';
           </script>";
+        }
       }
     }
 

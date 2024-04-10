@@ -31,11 +31,11 @@ $pdf->SetFillColor(255, 255, 255);
 $id = $_GET['id'];
 $name = $_GET['name'];
 $html = <<<EOD
-<div style = "line-height: 5px; border-style: solid; margin: 20px;">
-    <p style="text-align: center; font-weight: bold; font-size:20px;">BUNG-AW ECO FARM</p>
+<div style = "line-height: 5px; border-style: solid;">
+    <p style="text-align: center; font-weight: bold">BUNG-AW-CASHIERING</p>
 
     <div style="text-align: center;">
-        <label style=" text-align: center; font-size:15px">Food
+        <label style=" text-align: center;">Food
             Orders:</label>
     </div>
 </div>
@@ -51,16 +51,10 @@ $actresult = mysqli_query($conn, $sql);
 while ($result = mysqli_fetch_assoc($actresult)) {
     $total += $result['cost'];
     $newhtml = <<<EOD
-    <table cellspacing="8">
+    <table cellspacing="0">
         <tr>
-<<<<<<< HEAD
-            
-            <td style="font-size: 15px;">{$result['name']}:</td>
-            <td style="font-size: 15px;" align="right">{$result['price']} Pesos</td>
-=======
             <td>{$result['quantity']} - {$result['name']}:</td>
             <td align="right">{$result['cost']} Pesos</td>
->>>>>>> b14f013044e34fd8c7f8e867f327c666aca1829d
         </tr>
     </table>
     EOD;
@@ -73,14 +67,13 @@ while ($result = mysqli_fetch_assoc($actresult)) {
     $pdf->writeHTMLCell(0, 0, '', $pos, $newhtml, false, 0, 0, '', false);
 }
 $endhtml = <<<EOD
-<table cellspacing="8">
+<table cellspacing="0">
     <tr>
-        
         <td> </td>
-        <td style="font-size: 15px;"align="right">Total: $total Pesos</td>
+        <td align="right">Total: $total Pesos</td>
     </tr>
 </table>
-<label style=" text-align: left; font-size: 15px;">Ordered By: $name </label>
+<label style=" text-align: left;">Ordered By: $name </label>
 EOD; 
 $pos = ($i * 5) + 23;
 $pdf->writeHTMLCell(0, 0, '', $pos, $endhtml, 0, 0, true, '', true);

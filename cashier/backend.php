@@ -28,33 +28,13 @@ class Cashiering
     return $result;
   }
 
-  public function ViewOrders()
+  public function CountOrders()
   {
-    echo "<h5>Item Name</h5>";
-    foreach ($_SESSION['foodarr'] as $var) {
-      $sql = "SELECT * FROM `foods` WHERE id = {$var['item_id']};";
-      $result = mysqli_query($this->con, $sql);
-      $row = mysqli_fetch_assoc($result);
-      echo "<div style='display: grid; grid-template-columns: 1fr 50px 100px; gap: 8px; padding: 4px'>";
-      echo "<div>{$row['name']}</div>";
-      echo "<div><input type='number' id='quantity_{$var['item_id']}' class='form-control' onChange='addQuantity({$var['item_id']})' value='{$var['qty']}'></div>";
-      echo "</div>";
+    $counter  = 0;
+    foreach ($_SESSION['foodarr'] as $rows) {
+      $counter += $rows['qty'];
     }
-  }
-
-  public function deleteItem($itemId)
-  {
-    // Implement the logic to delete the item
-    // For demonstration purposes, let's remove it from the session array
-    $key = array_search($itemId, array_column($_SESSION['foodarr'], 'item_id'));
-    if ($key !== false) {
-      unset($_SESSION['foodarr'][$key]);
-      // Reset array keys
-      $_SESSION['foodarr'] = array_values($_SESSION['foodarr']);
-    }
-    echo "<script>
-    window.location.href='addfood.php';
-  </script>";
+    return $counter;
   }
 
   public function FoodAddOrder($customerName)
@@ -66,6 +46,18 @@ class Cashiering
       $row = mysqli_fetch_assoc($result);
       $_SESSION['foodarr'] = array();
       $_SESSION['bulkid'] = $row['id'];
+      $sql2 = "SELECT * FROM `foods`;";
+      $foodresult = mysqli_query($this->con, $sql2);
+      while ($rows = (mysqli_fetch_assoc($foodresult))) {
+        $item_data = array(
+          'item_id' => $rows['id'],
+          'item_name' => $rows['name'],
+          'item_type' => $rows['type'],
+          'item_price' => $rows['price'],
+          'qty' => 0
+        );
+        array_push($_SESSION['foodarr'], $item_data);
+      }
       echo "<script>
         alert('Adding of Food Order Successful');
         window.location.href='addfood.php';

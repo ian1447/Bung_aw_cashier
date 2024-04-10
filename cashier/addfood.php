@@ -57,15 +57,15 @@ $cashiering->setDb($conn);
 
                 <div class="form-group">
                     <label>Item Count:</label>
-                    <input type="text" id="item_count" name="item_count" value="<?php echo count($_SESSION["foodarr"]) ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
-                    <button class="btn btn text-white m-lg-2" id="resetBtn" style="background-color: #556B2F" name="reset_button">Clear Orders</button>
-                    <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View
-                        Orders</button>
+                    <input type="text" id="item_count" name="item_count" value="<?php echo $cashiering->CountOrders(); ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
+                    <!-- <button class="btn btn text-white m-lg-2" id="resetBtn" style="background-color: #556B2F" name="reset_button">Clear Orders</button> -->
+                    <!-- <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View
+                        Orders</button> -->
                     <?php
-                    if (array_key_exists('finalize', $_POST)) {
-                        $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                        unset($_POST);
-                    }
+                    // if (array_key_exists('finalize', $_POST)) {
+                    //     $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                    //     unset($_POST);
+                    // }
                     ?>
                 </div>
                 <div class="table-responsive">
@@ -73,29 +73,34 @@ $cashiering->setDb($conn);
                         <div class="m-2">
                             <thead>
                                 <tr>
+                                    <th hidden>Id</th>
                                     <th>Food Type</th>
                                     <th>Food Name</th>
                                     <th>Amount</th>
-                                    <th>Action</th>
+                                    <th style="width: 2px;">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <form method="POST">
-                                    <?php $results = $cashiering->GetAllFoodItems();
-                                    while ($rows = (mysqli_fetch_assoc($results))) { ?>
+                                    <?php
+                                    foreach ($_SESSION['foodarr'] as $rows) { ?>
                                         <tr>
-                                            <td>
-                                                <?php echo $rows['type'] ?>
+                                            <td hidden>
+                                                <?php echo $rows['item_id'] ?>
                                             </td>
                                             <td>
-                                                <?php echo $rows['name'] ?>
+                                                <?php echo $rows['item_type'] ?>
                                             </td>
                                             <td>
-                                                <?php echo $rows['price'] ?>
+                                                <?php echo $rows['item_name'] ?>
+                                            </td>
+                                            <td>
+                                                <?php echo $rows['item_price'] ?>
                                             </td>
                                             <td>
                                                 <div class="d-grid gap-2 d-md-flex">
-                                                    <input type="checkbox" name="selected_items[]" value="<?php echo $rows['id']; ?>" />
+                                                    <!-- <input type="checkbox" name="selected_items[]" value="" /> -->
+                                                    <div><input type='number' class="item_quan" id=<?php echo "quantity_{$rows['item_id']}"; ?> class='form-control' onChange=<?php echo "quantity_{$rows['item_id']}"; ?> value=<?php echo "{$rows['qty']}"; ?>></div>
                                                 </div>
                                             </td>
                                         </tr>
@@ -112,43 +117,12 @@ $cashiering->setDb($conn);
                 </div>
                 <?php
                 if (array_key_exists('add_to_order', $_POST)) {
-                    foreach ($_POST['selected_items'] as $item_id) {
-                        $item_data = array(
-                            'item_id' => $item_id,
-                            'qty' => 1
-                        );
-                        array_push($_SESSION['foodarr'], $item_data);
-                    }
-                    echo "<script>
-                        window.location.href='addfood.php';
-                        </script>";
+                    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                    unset($_POST);
                 }
                 ?>
             </div>
         </div>
-        <!-- Second Modal -->
-        <div class="modal fade" id="myModal2" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel2">Ordered Items</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <ul id="orderedItemsList"></ul>
-                        <?php $results = $cashiering->ViewOrders(); ?>
-                    </div>
-                    <div class="modal-footer">
-                        <form method="POST">
-                            <button class="btn btn text-white m-lg-2" id="myBtn" onclick="loading()" style="background-color: #556B2F; " type="submit" name="finalize">Finalize
-                                Order</button>
-                        </form>
-                        <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
     </main>
 
     <script src="./js/bootstrap.bundle.min.js"></script>
@@ -163,19 +137,21 @@ $cashiering->setDb($conn);
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <script>
         $(document).ready(function() {
             $("#myBtn").click(function() {
                 $("#myModal").modal("toggle");
             });
         });
-        $(document).on('change', '#payment_amount', function() {
-            var $row = $(this).closest('tr'); // Get the closest table row
-            var item_price = parseFloat($row.find('#item_price').val());
-            var payment_amount = parseFloat($(this).val());
-            var change = payment_amount - item_price;
-            $row.find('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
-        });
+        // $(document).on('change', '#payment_amount', function() {
+        //     var $row = $(this).closest('tr'); // Get the closest table row
+        //     var item_price = parseFloat($row.find('#item_price').val());
+        //     var payment_amount = parseFloat($(this).val());
+        //     var change = payment_amount - item_price;
+        //     $row.find('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
+        // });
     </script>
 
     <script>
@@ -184,21 +160,55 @@ $cashiering->setDb($conn);
                 $("#myModal2").modal("toggle");
             });
         });
-        function addQuantity(itemId) {
-            var quantity = document.getElementById('quantity_' + itemId).value;
-            console.log(quantity);
-            // Send AJAX request to update session variable
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'update_quantity.php', true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Handle response if needed
-                    console.log(xhr.responseText);
-                }
-            };
-            xhr.send('item_id=' + itemId + '&quantity=' + quantity);
-        }
+
+        $(document).ready(function() {
+            var table = $('#example').DataTable();
+            $('#example').on('input', '.item_quan', function() {
+                // var rowData = table.row($(this).closest('tr')).data();
+                var closestRow = this.closest('tr'); // Directly find closest table row
+                //console.log("closestRow:", closestRow); // Debugging
+                var rowData = [];
+                closestRow.querySelectorAll('td').forEach(function(cell) {
+                    rowData.push(cell.textContent.trim());
+                });
+               // console.log("rowData:", rowData); // Debugging
+                var newValue = $(this).val();
+                var old_count = parseFloat($('#item_count').val());
+                $('#item_count').val(old_count + 1);
+                addQuantity(rowData[0], newValue);
+            });
+
+            function addQuantity(itemId, newquan) {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'update_quantity.php', true);
+                xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        //console.log("response",xhr.responseText);
+                        xhr.responseText
+                    }
+                };
+                xhr.send('item_id=' + itemId + '&quantity=' + newquan);
+            }
+        });
+
+        // function addQuantity(itemId) {
+        //     //var quantity = document.getElementById('quantity_' + itemId).value;
+        //     console.log("quantity");
+        //     var quantity = $(this).val();
+        //     console.log(quantity);
+        //     // Send AJAX request to update session variable
+        //     var xhr = new XMLHttpRequest();
+        //     xhr.open('POST', 'update_quantity.php', true);
+        //     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        //     xhr.onreadystatechange = function() {
+        //         if (xhr.readyState == 4 && xhr.status == 200) {
+        //             // Handle response if needed
+        //             console.log(xhr.responseText);
+        //         }
+        //     };
+        //     xhr.send('item_id=' + itemId + '&quantity=' + quantity);
+        // }
     </script>
 
 </body>

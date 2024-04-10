@@ -5,11 +5,29 @@ include "../dbcon.php";
 
 // Include the main TCPDF library (search for installation path).
 require_once('includes/TCPDF/tcpdf.php');
+// Extend the TCPDF class to create custom Header and Footer
+class MYPDF extends TCPDF
+{
 
+    //Page header
+    public function Header()
+    {
+        // Logo
+        // $image_file = K_PATH_IMAGES . 'images/admin.jpg'; 
+        // $this->Image($image_file, 10, 10, 190, '', 'JPG', '', 'C', false, 300, '', false, false, 0, false, false, false);
+        // $this->Image('images/admin.jpg',10,10,10);
+        $this->Cell(12);
+        // // Set font
+        // $this->SetFont('helvetica', 'B', 20);
+        // Title
+        $this->Cell(0, 15, '<< TCPDF Example 003 >>', 0, 1);
+    }
+
+}
 $pageLayout = array(100, 150);
 // create new PDF document
-$pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, $pageLayout, true, 'UTF-8', false);
-
+$pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, $pageLayout, true, 'UTF-8', false);
+//$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
 
 // set font
 $pdf->SetFont('times', '', 10);
@@ -32,6 +50,7 @@ $id = $_GET['id'];
 $name = $_GET['name'];
 $html = <<<EOD
 <div style = "line-height: 5px; border-style: solid;">
+    <img src="images/admin.jpg">
     <p style="text-align: center; font-weight: bold">BUNG-AW-CASHIERING</p>
 
     <div style="text-align: center;">
@@ -74,7 +93,7 @@ $endhtml = <<<EOD
     </tr>
 </table>
 <label style=" text-align: left;">Ordered By: $name </label>
-EOD; 
+EOD;
 $pos = ($i * 5) + 23;
 $pdf->writeHTMLCell(0, 0, '', $pos, $endhtml, 0, 0, true, '', true);
 // ---------------------------------------------------------

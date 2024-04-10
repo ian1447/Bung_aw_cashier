@@ -57,7 +57,7 @@ $cashiering->setDb($conn);
 
                 <div class="form-group">
                     <label>Item Count:</label>
-                    <input type="text" id="item_count" name="item_count" value="<?php echo $cashiering->CountOrders(); ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled>
+                    <!-- <input type="text" id="item_count" name="item_count" value="<?php //echo $cashiering->CountOrders(); ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled> -->
                     <!-- <button class="btn btn text-white m-lg-2" id="resetBtn" style="background-color: #556B2F" name="reset_button">Clear Orders</button> -->
                     <!-- <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View
                         Orders</button> -->

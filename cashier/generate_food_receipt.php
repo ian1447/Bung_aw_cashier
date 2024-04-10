@@ -49,13 +49,18 @@ $sql = "SELECT * FROM `food_orders` fo
 JOIN `foods` f ON f.id = fo.`food_id` WHERE fo.`food_bulk_id` = {$id};";
 $actresult = mysqli_query($conn, $sql);
 while ($result = mysqli_fetch_assoc($actresult)) {
-    $total += $result['price'];
+    $total += $result['cost'];
     $newhtml = <<<EOD
     <table cellspacing="8">
         <tr>
+<<<<<<< HEAD
             
             <td style="font-size: 15px;">{$result['name']}:</td>
             <td style="font-size: 15px;" align="right">{$result['price']} Pesos</td>
+=======
+            <td>{$result['quantity']} - {$result['name']}:</td>
+            <td align="right">{$result['cost']} Pesos</td>
+>>>>>>> b14f013044e34fd8c7f8e867f327c666aca1829d
         </tr>
     </table>
     EOD;

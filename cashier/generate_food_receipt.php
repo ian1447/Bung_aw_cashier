@@ -49,13 +49,10 @@ $pdf->SetFillColor(255, 255, 255);
 $id = $_GET['id'];
 $name = $_GET['name'];
 $html = <<<EOD
-<div style = "line-height: 5px; border-style: solid;">
-    <img src="images/admin.jpg">
-    <p style="text-align: center; font-weight: bold">BUNG-AW-CASHIERING</p>
-
-    <div style="text-align: center;">
-        <label style=" text-align: center;">Food
-            Orders:</label>
+<div style="display: flex; justify-content: space-between; align-items: center; text-align: center; line-height: 5px; border-style: solid;">
+    <div>
+        <img src="images/admin.jpg" style="width: 50px; height: 50px;">
+        <h1>Bung-Aw Eco Farm</h1>
     </div>
 </div>
 EOD;
@@ -70,7 +67,7 @@ $actresult = mysqli_query($conn, $sql);
 while ($result = mysqli_fetch_assoc($actresult)) {
     $total += $result['cost'];
     $newhtml = <<<EOD
-    <table cellspacing="0">
+    <table cellspacing="0" style="padding-top: 50px">
         <tr>
             <td>{$result['quantity']} - {$result['name']}:</td>
             <td align="right">{$result['cost']} Pesos</td>
@@ -86,7 +83,7 @@ while ($result = mysqli_fetch_assoc($actresult)) {
     $pdf->writeHTMLCell(0, 0, '', $pos, $newhtml, false, 0, 0, '', false);
 }
 $endhtml = <<<EOD
-<table cellspacing="0">
+<table cellspacing="0" style="padding-top: 50px">
     <tr>
         <td> </td>
         <td align="right">Total: $total Pesos</td>

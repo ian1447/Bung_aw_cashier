@@ -30,7 +30,7 @@ $pdf = new MYPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, $pageLayout, true, 'UTF-8', fal
 //$pdf->SetHeaderData(PDF_HEADER_LOGO, PDF_HEADER_LOGO_WIDTH, PDF_HEADER_TITLE, PDF_HEADER_STRING);
 
 // set font
-$pdf->SetFont('times', '', 10);
+$pdf->SetFont('times', '', 14);
 
 // add a page
 $pdf->SetPrintHeader(false);
@@ -51,15 +51,19 @@ $name = $_GET['name'];
 $html = <<<EOD
 <div style="display: flex; justify-content: space-between; align-items: center; text-align: center; line-height: 5px; border-style: solid;">
     <div>
-        <img src="images/admin.jpg" style="width: 50px; height: 50px;">
+        <img src="images/logo.jpg" style="width: 50px; height: 50px;">
         <h1>Bung-Aw Eco Farm</h1>
     </div>
+    <div style="text-align: center;">
+    <label style=" text-align: center;">Food
+        Orders:</label>
+        </div>
 </div>
 EOD;
 // <div style = "line-height: 1px;">';
 
 $pdf->writeHTMLCell(0, 0, '', '', $html, 1, 0, 0, '', false);
-$i = 1;
+$i = 2;
 $total = 0;
 $sql = "SELECT * FROM `food_orders` fo
 JOIN `foods` f ON f.id = fo.`food_id` WHERE fo.`food_bulk_id` = {$id};";
@@ -75,9 +79,13 @@ while ($result = mysqli_fetch_assoc($actresult)) {
     </table>
     EOD;
     if ($i == 1) {
-        $pos = ($i * 5) + 23;
+        $pos = ($i * 5) + 24;
     } else {
-        $pos = ($i * 5) + 23;
+        $pos = ($i * 5) + 24;
+    }
+    if (strlen("{$result['quantity']} - {$result['name']}") > 15)
+    {
+        $i += 1;
     }
     $i += 1;
     $pdf->writeHTMLCell(0, 0, '', $pos, $newhtml, false, 0, 0, '', false);
@@ -91,7 +99,7 @@ $endhtml = <<<EOD
 </table>
 <label style=" text-align: left;">Ordered By: $name </label>
 EOD;
-$pos = ($i * 5) + 23;
+$pos = ($i * 5) + 24;
 $pdf->writeHTMLCell(0, 0, '', $pos, $endhtml, 0, 0, true, '', true);
 // ---------------------------------------------------------
 

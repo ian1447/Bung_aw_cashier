@@ -51,7 +51,7 @@ $html = <<<EOD
 
 <div style="display: flex; justify-content: space-between; align-items: center; text-align: center; line-height: 5px;">
     <div>
-        <img src="images/admin.jpg" style="width: 50px; height: 50px;">
+        <img src="images/logo.jpg" style="width: 50px; height: 50px;">
         <h1>Bung-Aw Eco Farm</h1>
     </div>
 </div>

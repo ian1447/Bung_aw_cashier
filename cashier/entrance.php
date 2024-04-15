@@ -80,7 +80,7 @@ $cashiering->setDb($conn);
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
-                                                    <label for="event_venue">Number of Adults(Above 13) </label>
+                                                    <label for="event_venue">Number of Adults(Above 13) ₱50 </label>
                                                     <input type="number" class="form-control" id="no_of_adults"
                                                         name="no_of_adults" autocomplete="off"
                                                         placeholder="Enter Number of Adults" required>
@@ -90,7 +90,7 @@ $cashiering->setDb($conn);
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <label for="event_description">Number of Children (5-12 years
-                                                        old)</label>
+                                                        old) ₱20</label>
                                                     <input type="Number" class="form-control" id="no_of_children"
                                                         name="no_of_children" autocomplete="off"
                                                         placeholder="Enter Number of Children" required>
@@ -99,7 +99,7 @@ $cashiering->setDb($conn);
                                                     </div>
                                                 </div> 
                                                 <div class="col-md-12 mb-2">
-                                                    <label for="event_description">Number of Senior Citizen</label>
+                                                    <label for="event_description">Number of Senior Citizen ₱20</label>
                                                     <input type="Number" class="form-control" id="no_of_senior"
                                                         name="no_of_senior" autocomplete="off"
                                                         placeholder="Enter Number of Senior Citizen" required>

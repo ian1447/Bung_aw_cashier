@@ -159,7 +159,7 @@ class Cashiering
 
   public function SaveEvents($bookername, $eventname, $eventvenue, $description, $capacity, $date, $price)
   {
-    $checker = "SELECT COUNT(*) as `count` FROM `events` WHERE `date` = '$date'; ";
+    $checker = "SELECT COUNT(*) as `count` FROM `events` WHERE `date` = '$date' and `venue` = '$eventvenue';";
     $checkerresult = mysqli_query($this->con, $checker);
 
     $checkerrow = mysqli_fetch_assoc($checkerresult);

@@ -41,6 +41,7 @@
       </button>
       <div class="collapse navbar-collapse" id="topNavBar">
         <form class="d-flex ms-auto my-3 my-lg-0"></form>
+        <a href="./notifications.php" class="text-white mx-4"><i class="btn bi bi-bell-fill text-white"></i></a>
         <span class="text-white fw-bold">
           <?php echo $_SESSION['email']; ?>
         </span>

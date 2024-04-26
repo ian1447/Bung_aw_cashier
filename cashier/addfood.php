@@ -91,7 +91,7 @@ $cashiering->setDb($conn);
                                                             <?php echo $rows['item_name'] ?>
                                                         </td>
                                                         <td>
-                                                            <?php echo $rows['item_price'] ?>
+                                                            ₱<?php echo $rows['item_price'] ?>
                                                         </td>
                                                         <td>
                                                             <!-- <input type="checkbox" name="selected_items[]" value="" /> -->
@@ -134,7 +134,7 @@ $cashiering->setDb($conn);
                                             </div>
                                             <div class="card-body">
                                                 <h5 class="card-title"><?php echo $rows['item_name'] ?></h5>
-                                                <p class="card-text"><?php echo $rows['item_price'] ?></p>
+                                                <p class="card-text">₱<?php echo $rows['item_price'] ?></p>
                                                 <a href="#" class="btn w-100" style="background-color: #041C32; color: white">Add Food</a>
                                             </div>
                                         </div>

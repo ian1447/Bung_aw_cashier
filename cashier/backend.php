@@ -20,6 +20,17 @@ class Cashiering
     return $result;
   }
 
+  public function GetReservations(){
+    $sql = "SELECT *, CONCAT(users.first_name, ' ', users.last_name) AS name, room_types.name AS room_type, room_bookings.status
+    FROM room_bookings 
+    JOIN users ON room_bookings.user_id = users.id
+    JOIN rooms ON room_bookings.room_id = rooms.id
+    JOIN room_types ON rooms.room_type_id = room_types.id";
+    $result = mysqli_query($this->con, $sql);
+
+    return $result;
+  }
+
   public function GetAllFoodOrders()
   {
     $sql = "SELECT * FROM `food_bulk_orders` WHERE total_amount != 0;";

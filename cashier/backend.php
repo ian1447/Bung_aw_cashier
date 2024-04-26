@@ -25,7 +25,8 @@ class Cashiering
     FROM room_bookings 
     JOIN users ON room_bookings.user_id = users.id
     JOIN rooms ON room_bookings.room_id = rooms.id
-    JOIN room_types ON rooms.room_type_id = room_types.id";
+    JOIN room_types ON rooms.room_type_id = room_types.id
+    ORDER BY transaction_id DESC";
     $result = mysqli_query($this->con, $sql);
 
     return $result;

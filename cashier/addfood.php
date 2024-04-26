@@ -54,73 +54,97 @@ $cashiering->setDb($conn);
                 <span><i class="bi bi-file-text-fill me-2"></i></span> Foods
             </div>
             <div class="card-body">
-
-                <div class="form-group">
-                    <label>Item Count:</label>
-                    <!-- <input type="text" id="item_count" name="item_count" value="<?php //echo $cashiering->CountOrders(); ?>" class="bi bi-file-text-fill me-2" autocomplete="off" disabled> -->
-                    <!-- <button class="btn btn text-white m-lg-2" id="resetBtn" style="background-color: #556B2F" name="reset_button">Clear Orders</button> -->
-                    <!-- <button class="btn btn text-white m-lg-2" id="myBtn2" data-bs-toggle="modal" data-bs-target="#myModal2" style="background-color: #556B2F" name="another_button">View
-                        Orders</button> -->
-                    <?php
-                    // if (array_key_exists('finalize', $_POST)) {
-                    //     $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                    //     unset($_POST);
-                    // }
-                    ?>
-                </div>
-                <div class="table-responsive">
-                    <table id="example" class="table table-hover data-table" style="width: 100%">
-                        <div class="m-2">
-                            <thead>
-                                <tr>
-                                    <th hidden>Id</th>
-                                    <th>Food Type</th>
-                                    <th>Food Name</th>
-                                    <th>Amount</th>
-                                    <th style="width: 2px;">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <form method="POST">
+                <div class="container">
+                    <div class="table-responsive">
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="basic-addon1">Name:</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                                </div>
+                                <table id="example" class="table table-hover data-table" style="width: 100%">
+                                    <div class="m-2">
+                                        <thead>
+                                            <tr>
+                                                <th hidden>Id</th>
+                                                <th>Food Type</th>
+                                                <th>Food Name</th>
+                                                <th>Amount</th>
+                                                <th>Qty</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <form method="POST">
+                                                <?php
+                                                foreach ($_SESSION['foodarr'] as $rows) { ?>
+                                                    <tr>
+                                                        <td hidden>
+                                                            <?php echo $rows['item_id'] ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $rows['item_type'] ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $rows['item_name'] ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $rows['item_price'] ?>
+                                                        </td>
+                                                        <td>
+                                                            <!-- <input type="checkbox" name="selected_items[]" value="" /> -->
+                                                                <input type='number' class="item_quan" id=<?php echo "quantity_{$rows['item_id']}"; ?> 
+                                                                class='form-control' onChange=<?php echo "quantity_{$rows['item_id']}"; ?> value=<?php echo "{$rows['qty']}"; ?>>
+                                                        </td>
+                                                        <td><i class="btn bi bi-x-circle"></i></td>
+                                                    </tr>
+                                                <?php } ?>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <input type="submit" class="btn btn-info" name="add_to_order" value="Add to Order">
+                                                    </td>
+                                                </tr>
+                                            </form>
+                                        </tbody>
+                                    </div>
+                                </table>
+                            </div>
+                            <?php
+                            if (array_key_exists('add_to_order', $_POST)) {
+                                $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
+                                unset($_POST);
+                            }
+                            ?>
+                            <div class="col">
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" placeholder="Ex. Vegetables" aria-label="Search Food Name" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button">Search</button>
+                                    </div>
+                                </div>
+                                <div class="row" style="width: auto;">
                                     <?php
-                                    foreach ($_SESSION['foodarr'] as $rows) { ?>
-                                        <tr>
-                                            <td hidden>
-                                                <?php echo $rows['item_id'] ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $rows['item_type'] ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $rows['item_name'] ?>
-                                            </td>
-                                            <td>
-                                                <?php echo $rows['item_price'] ?>
-                                            </td>
-                                            <td>
-                                                <div class="d-grid gap-2 d-md-flex">
-                                                    <!-- <input type="checkbox" name="selected_items[]" value="" /> -->
-                                                    <div><input type='number' class="item_quan" id=<?php echo "quantity_{$rows['item_id']}"; ?> class='form-control' onChange=<?php echo "quantity_{$rows['item_id']}"; ?> value=<?php echo "{$rows['qty']}"; ?>></div>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                     foreach ($_SESSION['foodarr'] as $rows) { ?>
+                                    <div class="col p-2">
+                                        <div class="card text-center">
+                                            <div class="d-flex justify-content-center">
+                                                <img class="card-img-top w-50" src="./images/logo.png" alt="Food Image">
+                                            </div>
+                                            <div class="card-body">
+                                                <h5 class="card-title"><?php echo $rows['item_name'] ?></h5>
+                                                <p class="card-text"><?php echo $rows['item_price'] ?></p>
+                                                <a href="#" class="btn w-100" style="background-color: #041C32; color: white">Add Food</a>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <?php } ?>
-                                    <tr>
-                                        <td colspan="4">
-                                            <input type="submit" class="btn btn-info" name="add_to_order" value="Add to Order">
-                                        </td>
-                                    </tr>
-                                </form>
-                            </tbody>
+                                </div>
+                            </div>
                         </div>
-                    </table>
+                    </div>
                 </div>
-                <?php
-                if (array_key_exists('add_to_order', $_POST)) {
-                    $cashiering->FinalizeFoodOrder($_SESSION['bulkid']);
-                    unset($_POST);
-                }
-                ?>
             </div>
         </div>
     </main>

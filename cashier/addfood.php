@@ -4,6 +4,34 @@ include "../dbcon.php";
 include 'backend.php';
 $cashiering = new Cashiering();
 $cashiering->setDb($conn);
+
+// Initialize selected food items array in session if it's not already set
+if (!isset($_SESSION['food_items'])) {
+    $_SESSION['food_items'] = array();
+}
+
+// Check if the form is submitted
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Check if all necessary fields are set
+    if (isset($_POST['item_id'], $_POST['item_type'], $_POST['item_name'], $_POST['item_price'])) {
+        // Add the submitted food item to the session array
+        $food_item = array(
+            'item_id' => $_POST['item_id'],
+            'item_type' => $_POST['item_type'],
+            'item_name' => $_POST['item_name'],
+            'item_price' => $_POST['item_price'],
+            'qty' => 1
+        );
+        $_SESSION['food_items'][] = $food_item;
+    }
+    // Check if it's for removing an item
+    elseif (isset($_POST['remove_item_index']) && is_numeric($_POST['remove_item_index'])) {
+        $index = intval($_POST['remove_item_index']);
+        if (isset($_SESSION['food_items'][$index])) {
+            unset($_SESSION['food_items'][$index]);
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,57 +87,84 @@ $cashiering->setDb($conn);
                         <div class="row">
                             <div class="col">
                                 <div class="input-group mb-3">
-                                    <div class="input-group-prepend">
+                                    <!-- <div class="input-group-prepend">
                                         <span class="input-group-text" id="basic-addon1">Name:</span>
                                     </div>
-                                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                                    <input type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1"> -->
                                 </div>
-                                <table id="example" class="table table-hover data-table" style="width: 100%">
-                                    <div class="m-2">
-                                        <thead>
-                                            <tr>
-                                                <th hidden>Id</th>
-                                                <th>Food Type</th>
-                                                <th>Food Name</th>
-                                                <th>Amount</th>
-                                                <th>Qty</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <form method="POST">
-                                                <?php
-                                                foreach ($_SESSION['foodarr'] as $rows) { ?>
+                                <form method="POST">
+                                    <table id="example" class="table table-hover data-table" style="width: 100%">
+                                        <div class="m-2">
+                                            <thead>
+                                                <tr>
+                                                    <th hidden>Id</th>
+                                                    <th>Food Type</th>
+                                                    <th>Food Name</th>
+                                                    <th>Amount</th>
+                                                    <th>Qty</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($_SESSION['food_items'] as $index => $rows) { ?>
                                                     <tr>
-                                                        <td hidden>
-                                                            <?php echo $rows['item_id'] ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $rows['item_type'] ?>
-                                                        </td>
-                                                        <td>
-                                                            <?php echo $rows['item_name'] ?>
-                                                        </td>
-                                                        <td>
-                                                            ₱<?php echo $rows['item_price'] ?>
-                                                        </td>
-                                                        <td>
-                                                            <!-- <input type="checkbox" name="selected_items[]" value="" /> -->
-                                                                <input type='number' class="item_quan" id=<?php echo "quantity_{$rows['item_id']}"; ?> 
-                                                                class='form-control' onChange=<?php echo "quantity_{$rows['item_id']}"; ?> value=<?php echo "{$rows['qty']}"; ?>>
-                                                        </td>
-                                                        <td><i class="btn bi bi-x-circle"></i></td>
+                                                        <?php if ($index === 0) { ?>
+                                                            <!-- Set the first row as empty and hidden -->
+                                                            <td hidden></td>
+                                                            <td hidden></td>
+                                                            <td hidden></td>
+                                                            <td hidden>₱0.00</td>
+                                                            <td hidden></td>
+                                                            <td hidden></td>
+                                                        <?php } else { ?>
+                                                            <td hidden><?php echo $rows['item_id'] ?></td>
+                                                            <td><?php echo $rows['item_type'] ?></td>
+                                                            <td><?php echo $rows['item_name'] ?></td>
+                                                            <td>₱<?php echo $rows['item_price'] ?></td>
+                                                            <td>
+                                                                <input type="number"
+                                                                    class="item_quan form-control"
+                                                                    name="item_quantity_<?php echo $rows['item_id']; ?>"
+                                                                    id="<?php echo "quantity_{$rows['item_id']}"; ?>"
+                                                                    onchange="updateTotalAmount()"
+                                                                    value="<?php echo "{$rows['qty']}"; ?>"
+                                                                    min="1">
+                                                            </td>
+                                                            <td>
+                                                                <form method="POST">
+                                                                    <input type="hidden" name="remove_item_index" value="<?php echo $index ?>">
+                                                                    <button type="submit" name="remove_item_index" value="<?php echo $index ?>" class="btn bi bi-x-circle" style="background-color: transparent; border: none;"></button>
+                                                                </form>
+                                                            </td>
+                                                        <?php } ?>
                                                     </tr>
                                                 <?php } ?>
                                                 <tr>
+                                                    <td colspan="3"></td>
+                                                    <td>Total Amount:</td>
+                                                    <td id="totalAmount">
+                                                        <!-- Total amount will be dynamically updated here -->
+                                                        <?php
+                                                            $total_amount = 0;
+                                                            foreach ($_SESSION['food_items'] as $index => $rows) {
+                                                                if ($index !== 0) {
+                                                                    $total_amount += $rows['item_price'] * $rows['qty'];
+                                                                }
+                                                            }
+                                                            echo "₱" . number_format($total_amount, 2);
+                                                        ?>
+                                                    </td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="4">
-                                                        <input type="submit" class="btn btn-info" name="add_to_order" value="Add to Order">
+                                                        <button type="submit" class="btn btn-info" name="add_to_order">Save Order</button>
                                                     </td>
                                                 </tr>
-                                            </form>
-                                        </tbody>
-                                    </div>
-                                </table>
+                                            </tbody>
+                                        </div>
+                                    </table>
+                                </form>
                             </div>
                             <?php
                             if (array_key_exists('add_to_order', $_POST)) {
@@ -125,24 +180,31 @@ $cashiering->setDb($conn);
                                     </div>
                                 </div>
                                 <div class="row" style="width: auto;">
-                                    <?php
-                                     foreach ($_SESSION['foodarr'] as $rows) { ?>
-                                    <div class="col p-2">
-                                        <div class="card text-center">
-                                            <div class="d-flex justify-content-center">
-                                                <img class="card-img-top w-50" src="./images/logo.png" alt="Food Image">
-                                            </div>
-                                            <div class="card-body">
-                                                <h5 class="card-title"><?php echo $rows['item_name'] ?></h5>
-                                                <p class="card-text">₱<?php echo $rows['item_price'] ?></p>
-                                                <a href="#" class="btn w-100" style="background-color: #041C32; color: white">Add Food</a>
+                                     <?php
+                                        foreach ($_SESSION['foodarr'] as $rows) { ?>
+                                        <div class="col p-2">
+                                            <div class="card text-center">
+                                                <div class="d-flex justify-content-center">
+                                                    <img class="card-img-top w-50" src="./images/logo.png" alt="Food Image">
+                                                </div>
+                                                <div class="card-body">
+                                                    <h5 class="card-title"><?php echo $rows['item_name'] ?></h5>
+                                                    <p class="card-text">₱<?php echo $rows['item_price'] ?></p>
+                                                    <form method="POST">
+                                                        <input type="hidden" name="item_id" value="<?php echo $rows['item_id'] ?>"/>
+                                                        <input type="hidden" name="item_type" value="<?php echo $rows['item_type'] ?>"/>
+                                                        <input type="hidden" name="item_name" value="<?php echo $rows['item_name'] ?>"/>
+                                                        <input type="hidden" name="item_price" value="<?php echo $rows['item_price'] ?>"/>
+                                                        <button type="submit" class="btn w-100" style="background-color: #041C32; color: white">Add Food</button>
+                                                    </form>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
                                     <?php } ?>
                                 </div>
                             </div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -163,6 +225,50 @@ $cashiering->setDb($conn);
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <script>
+    function updateTotalAmount() {
+        let totalAmount = 0;
+        document.querySelectorAll('.item_quan').forEach(function (input) {
+            const rowIndex = input.closest('tr').rowIndex;
+            const price = parseFloat(input.closest('tr').querySelector('td:nth-child(4)').textContent.replace('₱', ''));
+            const quantity = parseFloat(input.value);
+            totalAmount += price * quantity;
+        });
+        document.getElementById('totalAmount').textContent = '₱' + totalAmount.toFixed(2);
+    }
+</script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Function to calculate total amount
+            function calculateTotalAmount() {
+                let totalAmount = 0;
+                document.querySelectorAll('#selectedItemsTable tbody tr').forEach(function (row) {
+                    const price = parseFloat(row.cells[3].textContent.replace('₱', ''));
+                    const quantity = parseFloat(row.querySelector('.item-quantity').value);
+                    totalAmount += price * quantity;
+                });
+                document.getElementById('totalAmount').textContent = '₱' + totalAmount.toFixed(2);
+            }
+
+            // Event listener for quantity input change
+            document.querySelectorAll('.item-quantity').forEach(function (input) {
+                input.addEventListener('change', calculateTotalAmount);
+            });
+
+            // Event listener for remove item button click
+            document.querySelectorAll('.remove-item').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    const index = this.getAttribute('data-index');
+                    // Remove the entire row from the table
+                    document.querySelectorAll('#selectedItemsTable tbody tr')[index].remove();
+                    calculateTotalAmount();
+                });
+            });
+        });
+    </script>
+    
     <script>
         $(document).ready(function() {
             $("#myBtn").click(function() {

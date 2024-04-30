@@ -79,17 +79,35 @@ class Cashiering
 
   public function FinalizeFoodOrder($bulk_id)
   {
-    $i = 0;
-    $len = count($_SESSION['foodarr']);
-    foreach ($_SESSION['foodarr'] as $food) {
-      if ($food['qty'] != 0) {
-        $sql = "SELECT * FROM `foods` WHERE `id` = " . $food['item_id'] . ";";
-        $result = mysqli_query($this->con, $sql);
+    $start_index = 0; // Index to start from
+    $found_start = false; // Flag to indicate if the start index is found
 
-        $row = mysqli_fetch_assoc($result);
-        $price = $food['qty'] * $row['price'];
+    foreach ($_SESSION['food_items'] as $food) { 
+        if (!$found_start) {
+            // Check if the current index is the start index
+            if ($start_index === 0) {
+                $found_start = true; // Set the flag to true
+            } else {
+                continue; // Skip this iteration until the start index is found
+            }
+        }
+
+        // Now $found_start is true, process the food item
+        if ($food['qty'] != 0) {
+            // echo "<script>
+            // alert('Error Adding Food Order. " . $food['item_id'] . "');
+            // </script>";
+
+            $sql = "SELECT * FROM `foods` WHERE `id` = " . $food['item_id'] . ";";
+            $result = mysqli_query($this->con, $sql);
+            $row = mysqli_fetch_assoc($result);
+            $price = $food['qty'] * $row['price'];
+
+            echo "<script>
+            alert('Items to save. Item ID: " . $food['item_id'] . ", Quantity: " . $food['qty'] . ", Price: " . $price . ", Bulk ID: " . $bulk_id . "');
+            </script>";
         $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
-                  VALUES ({$food['item_id']},{$food['qty']},{$price},NOW(),{$_SESSION['bulkid']});";
+                  VALUES ({$food['item_id']},{$food['qty']},{$price},NOW(),{$bulk_id});";
         $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$price} WHERE id = {$_SESSION['bulkid']};";
         if ($this->con->query($food_order) === TRUE) {
           if ($this->con->query($update_food_bulk) === FALSE) {
@@ -100,13 +118,12 @@ class Cashiering
           }
         } else {
           echo "<script>
-          alert('Error Adding Food Order.');
+          alert('Error Adding Food Order. " . $food['item_id'] . "');
           window.location.href='addfood.php';
           </script>";
         }
       }
     }
-
     $sql = "SELECT SUM(fo.`cost`) AS `total` FROM `food_orders` fo 
     JOIN `foods` f ON f.`id` = fo.`food_id`
     WHERE fo.`food_bulk_id` = {$bulk_id};";
@@ -124,6 +141,7 @@ class Cashiering
     if ($this->con->query($sqlupdatebulk) === TRUE) {
       if ($this->con->query($addsql) === TRUE) {
         $_SESSION['bulkid'] = "";
+        session_unset();
         echo "<script>
         alert('Finalizing order Successful');
         window.location.href='food.php';

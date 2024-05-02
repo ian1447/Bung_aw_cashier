@@ -103,9 +103,9 @@ class Cashiering
             $row = mysqli_fetch_assoc($result);
             $price = $food['qty'] * $row['price'];
 
-            echo "<script>
-            alert('Items to save. Item ID: " . $food['item_id'] . ", Quantity: " . $food['qty'] . ", Price: " . $price . ", Bulk ID: " . $bulk_id . "');
-            </script>";
+            // echo "<script>
+            // alert('Items to save. Item ID: " . $food['item_id'] . ", Quantity: " . $food['qty'] . ", Price: " . $price . ", Bulk ID: " . $bulk_id . "');
+            // </script>";
         $food_order = "INSERT INTO `food_orders` (`food_id`,`quantity`,`cost`,`created_at`,`food_bulk_id`)
                   VALUES ({$food['item_id']},{$food['qty']},{$price},NOW(),{$bulk_id});";
         $update_food_bulk = "UPDATE `food_bulk_orders` SET `total_amount` = total_amount+{$price} WHERE id = {$_SESSION['bulkid']};";

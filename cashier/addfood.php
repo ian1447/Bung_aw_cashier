@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'item_type' => $_POST['item_type'],
             'item_name' => $_POST['item_name'],
             'item_price' => $_POST['item_price'],
-            'qty' => 1
+            'qty' => $_POST['item_quantity_'.$_POST['item_id']]
         );
         $_SESSION['food_items'][] = $food_item;
     }
@@ -29,6 +29,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $index = intval($_POST['remove_item_index']);
         if (isset($_SESSION['food_items'][$index])) {
             unset($_SESSION['food_items'][$index]);
+        }
+    }
+
+    // Check if it's for updating the quantity of an item
+    elseif (isset($_POST['update_quantity'], $_POST['item_id'], $_POST['quantity'])) {
+        $itemId = $_POST['item_id'];
+        $newQuantity = $_POST['quantity'];
+        foreach ($_SESSION['food_items'] as &$food_item) {
+            if ($food_item['item_id'] === $itemId) {
+                $food_item['qty'] = $newQuantity;
+                break;
+            }
         }
     }
 }
@@ -174,15 +186,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             ?>
                             <div class="col">
                                 <div class="input-group mb-3">
-                                    <input type="text" class="form-control" placeholder="Ex. Vegetables" aria-label="Search Food Name" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button">Search</button>
-                                    </div>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Ex. Vegetables" aria-label="Search Food Name" aria-describedby="basic-addon2" onkeyup="filterCards()">
                                 </div>
-                                <div class="row" style="width: auto;">
-                                     <?php
-                                        foreach ($_SESSION['foodarr'] as $rows) { ?>
-                                        <div class="col p-2">
+                                <div class="row" style="width: auto;" id="foodCards">
+                                    <?php foreach ($_SESSION['foodarr'] as $rows) { ?>
+                                        <div class="col p-2 food-card" data-name="<?php echo strtolower($rows['item_name']); ?>">
                                             <div class="card text-center">
                                                 <div class="d-flex justify-content-center">
                                                     <img class="card-img-top w-50" src="./images/logo.png" alt="Food Image">
@@ -227,17 +235,72 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
     <script>
-    function updateTotalAmount() {
-        let totalAmount = 0;
-        document.querySelectorAll('.item_quan').forEach(function (input) {
-            const rowIndex = input.closest('tr').rowIndex;
-            const price = parseFloat(input.closest('tr').querySelector('td:nth-child(4)').textContent.replace('₱', ''));
-            const quantity = parseFloat(input.value);
+        // function updateTotalAmount() {
+        // let totalAmount = 0;
+        // document.querySelectorAll('.item_quan').forEach(function(input) {
+        //     const rowIndex = input.closest('tr').rowIndex;
+        //     const price = parseFloat(input.closest('tr').querySelector('td:nth-child(4)').textContent.replace('₱', ''));
+        //     const quantity = parseFloat(input.value);
+        //     totalAmount += price * quantity;
+        // });
+        // document.getElementById('totalAmount').textContent = '₱' + totalAmount.toFixed(2);
+
+        // // Update the value of the quantity input
+        // const quantityInput = event.target;
+        // quantityInput.value = parseFloat(quantityInput.value); // Ensure the value is parsed as a float
+        // }
+
+        function updateTotalAmount() {
+    let totalAmount = 0;
+    let itemCount = 0; // Track the number of items with quantity > 0
+    document.querySelectorAll('.item_quan').forEach(function(input) {
+        const rowIndex = input.closest('tr').rowIndex;
+        const price = parseFloat(input.closest('tr').querySelector('td:nth-child(4)').textContent.replace('₱', ''));
+        const quantity = parseFloat(input.value);
+        if (quantity > 0) {
             totalAmount += price * quantity;
-        });
+            itemCount++; // Increment item count
+        }
+        // Update session with new quantity
+        const itemId = input.getAttribute('name').split('_')[2]; // Extract item ID from input name
+        updateSession(itemId, quantity);
+    });
+
+    // Display total only if there's at least one item with quantity > 0
+    if (itemCount > 0) {
         document.getElementById('totalAmount').textContent = '₱' + totalAmount.toFixed(2);
+    } else {
+        document.getElementById('totalAmount').textContent = '₱0.00';
     }
-</script>
+}
+
+    function updateSession(itemId, newQuantity) {
+        // Send AJAX request to update session variable
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'addfood.php', true);
+        xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                // Handle response if needed
+                console.log(xhr.responseText);
+            }
+        };
+        xhr.send('update_quantity=true&item_id=' + itemId + '&quantity=' + newQuantity);
+    }
+
+    function filterCards() {
+        const input = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.food-card');
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name');
+            if (name.includes(input)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

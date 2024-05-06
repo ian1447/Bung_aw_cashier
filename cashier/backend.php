@@ -334,7 +334,7 @@ class Cashiering
 
   public function GetAllRoomItems()
   {
-    $sql = "SELECT rb.id,r.`room_number`,DATE_FORMAT(DATE(rb.`arrival_date`), '%M %d,%Y') AS arrival_date,
+    $sql = "SELECT rb.id, rb.transaction_id,r.`room_number`,DATE_FORMAT(DATE(rb.`arrival_date`), '%M %d,%Y') AS arrival_date,
     DATE_FORMAT(DATE(rb.`departure_date`), '%M %d,%Y') AS departure_date,rb.`room_cost`,rt.`name`, IF(rb.`user_id` = 0, rb.`booker`,
     (SELECT CONCAT_WS(' ',u.`first_name`,u.`last_name`) FROM users u WHERE u.id = rb.`user_id`)) AS `booker` FROM `room_bookings` rb
     JOIN `rooms` r  ON r.`id` = rb.`room_id`
@@ -344,6 +344,7 @@ class Cashiering
 
     return $result;
   }
+
 
   public function SaveRoomPayment($id, $payment, $payment_type, $roomname)
   {

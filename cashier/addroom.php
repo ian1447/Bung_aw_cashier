@@ -55,7 +55,15 @@ $cashiering->setDb($conn);
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Book Manually</button>
+                <div class="row">
+                    <div class="col">
+                        <button class="btn btn text-white mb-2" id="myBtn" onclick="loading()" style="background-color: #064663; width: full-width">Book Manually</button>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Search by Transaction ID" id="searchInput" aria-label="Search by Transaction ID" aria-describedby="basic-addon2">
+                    </div>
+                </div>
+                    
                     <!-- Modal HTML -->
                     <div id="myModal" class="modal fade" data-bs-backdrop="static" tabindex="-1">
                             <div class="modal-dialog">
@@ -72,6 +80,7 @@ $cashiering->setDb($conn);
                         <div class="m-2">
                             <thead class>
                                 <tr>
+                                    <th>Transaction #</th>
                                     <th>Room Type</th>
                                     <th>Booker</th>
                                     <th>Room Number</th>
@@ -84,7 +93,10 @@ $cashiering->setDb($conn);
                             <tbody>
                                 <?php $results = $cashiering->GetAllRoomItems();
                                 while ($rows = (mysqli_fetch_assoc($results))) { ?>
-                                    <tr>
+                                    <tr id="row<?php echo $rows['id']; ?>">
+                                        <td>
+                                            <?php echo $rows['transaction_id'] ?>
+                                        </td>
                                         <td>
                                             <?php echo $rows['name'] ?>
                                         </td>
@@ -207,6 +219,29 @@ $cashiering->setDb($conn);
             $row.find('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
         });
     </script>
+
+<script>
+    // Get the input field
+    var input = document.getElementById("searchInput");
+
+    // Execute a function when the user releases a key on the keyboard
+    input.addEventListener("input", function() {
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("example");
+        var tr = table.getElementsByTagName("tr");
+        for (var i = 0; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[0]; // Assuming transaction_id is in the first column
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    });
+</script>
 
 </body>
 

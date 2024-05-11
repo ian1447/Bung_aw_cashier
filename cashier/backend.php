@@ -305,32 +305,46 @@ class Cashiering
   }
 
   public function BookRoomManually($booker, $roomnumber, $room_cost, $days)
-  {
+{
+    // Retrieve the last transaction number
+    $getLastTransactionNumberQuery = "SELECT transaction_id FROM room_bookings ORDER BY id DESC LIMIT 1";
+    $lastTransactionNumberResult = mysqli_query($this->con, $getLastTransactionNumberQuery);
+    $lastTransactionNumber = 0;
+    if (mysqli_num_rows($lastTransactionNumberResult) > 0) {
+        $lastTransactionNumberRow = mysqli_fetch_assoc($lastTransactionNumberResult);
+        $lastTransactionNumber = (int)substr($lastTransactionNumberRow['transaction_id'], -4);
+    }
+
+    // Increment the transaction number
+    $currentYear = date('Y');
+    $currentTransactionNumber = $lastTransactionNumber + 1;
+    $newTransactionNumber = $currentYear . str_pad($currentTransactionNumber, 4, '0', STR_PAD_LEFT);
+
     $checker = "SELECT id FROM `room_bookings` rb WHERE rb.`room_id` = {$roomnumber} AND 
     (NOW() BETWEEN rb.`arrival_date` AND rb.`departure_date` OR NOW() BETWEEN rb.`arrival_date` AND rb.`departure_date`) AND rb.`status` <> 'cancelled';";
     $checkerResult = mysqli_query($this->con, $checker);
     if (mysqli_num_rows($checkerResult) == 0) {
-      $sql = "INSERT INTO `room_bookings` (booker,room_id,user_id,arrival_date,departure_date,room_cost)
-    VALUES ('{$booker}',{$roomnumber},0,DATE(NOW()),DATE_ADD((DATE(NOW())), INTERVAL {$days} DAY),{$room_cost});";
+        $sql = "INSERT INTO `room_bookings` (transaction_id, booker, room_id, user_id, arrival_date, departure_date, room_cost)
+                VALUES ('{$newTransactionNumber}', '{$booker}', {$roomnumber}, 0, DATE(NOW()), DATE_ADD((DATE(NOW())), INTERVAL {$days} DAY), {$room_cost});";
 
-      if ($this->con->query($sql) === TRUE) {
-        echo "<script>
-      alert('Booking Successful');
-      window.location.href='addroom.php';
-      </script>";
-      } else {
-        echo "<script>
-      alert('Error Booking.');
-      window.location.href='addmanuallyroom.php';
-      </script>";
-      }
+        if ($this->con->query($sql) === TRUE) {
+            echo "<script>
+            alert('Booking Successful');
+            window.location.href='addroom.php';
+            </script>";
+        } else {
+            echo "<script>
+            alert('Error Booking.');
+            window.location.href='addmanuallyroom.php';
+            </script>";
+        }
     } else {
-      echo "<script>
-    alert('Date not available');
-    window.location.href='addmanuallyroom.php';
-    </script>";
+        echo "<script>
+        alert('Date not available');
+        window.location.href='addmanuallyroom.php';
+        </script>";
     }
-  }
+}
 
   public function GetAllRoomItems()
   {

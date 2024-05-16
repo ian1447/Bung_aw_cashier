@@ -366,6 +366,11 @@ class Cashiering
     $result = mysqli_query($this->con, $sql);
 
     $row = mysqli_fetch_assoc($result);
+
+    // echo "<script>
+    // alert('Payment: $id, Payment Type: $payment_type, Room Name: $roomname');
+    // </script>";
+
     if ($payment_type === "full_payment") {
       if ($row['room_cost'] > $payment) {
         echo "<script>
@@ -404,8 +409,8 @@ class Cashiering
       </script>";
       } else {
         $balance = $row['room_cost'] - $payment;
-        $addsql = "INSERT INTO `payments` (`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`,`remaining_balance`)
-                  VALUES ({$id}, '{$roomname}', {$payment}, 0, 'room',{$balance});";
+        $addsql = "INSERT INTO `payments` (`booker_name`,`item_id`,`item_name`,`amount`,`payment_type`,`paid_item_type`,`remaining_balance`)
+                  VALUES ('{$row['booker']}',{$id}, '{$roomname}', {$payment}, 0, 'room',{$balance});";
         $updatesql = "UPDATE `room_bookings` SET payment = 1 WHERE id = {$id};";
         if ($this->con->query($addsql) === TRUE) {
           if ($this->con->query($updatesql) === TRUE) {

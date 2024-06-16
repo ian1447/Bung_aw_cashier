@@ -57,12 +57,12 @@
                 Welcome
                 <?php echo $_SESSION['email']; ?> !
               </li>
-              <!-- <li>
+              <li>
                 <a class="dropdown-item text-white" href="./update_acc.php">
                   <span class="me-2"><i class="bi bi-gear-fill"></i></span>
                   Account Settings
                 </a>
-              </li> -->
+              </li>
               <li>
                 <hr class="dropdown-divider" />
               </li>

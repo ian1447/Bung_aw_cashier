@@ -231,14 +231,32 @@ $cashiering->setDb($conn);
             var total = (no_of_children * 50) + (no_of_adults * 100) + (no_of_senior * 50);
             $('#total_amount').val("    ₱".concat(total.toFixed(2))); // Update the change field in the same row
         });
+        // $(document).on('change', '#amount', function() {
+        //     var $row = $('tr'); // Get the closest table row
+        //     var no_of_adults = $('#no_of_adults').val();
+        //     var no_of_children = parseFloat($('#no_of_children').val());
+        //     var total = (no_of_children * 50) + (no_of_adults * 100);
+        //     var payment_amount = parseFloat($(this).val());
+        //     var change = payment_amount - total;
+        //     $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
+        // });
         $(document).on('change', '#amount', function() {
-            var $row = $('tr'); // Get the closest table row
-            var no_of_adults = $('#no_of_adults').val();
-            var no_of_children = parseFloat($('#no_of_children').val());
-            var total = (no_of_children * 50) + (no_of_adults * 100);
+            // Get the values of adults, children, and senior citizens
+            var no_of_adults = $('#no_of_adults').val() === "" ? 0 : parseFloat($('#no_of_adults').val());
+            var no_of_children = $('#no_of_children').val() === "" ? 0 : parseFloat($('#no_of_children').val());
+            var no_of_senior = $('#no_of_senior').val() === "" ? 0 : parseFloat($('#no_of_senior').val());
+
+            // Calculate the total amount
+            var total = (no_of_children * 50) + (no_of_adults * 100) + (no_of_senior * 50);
+
+            // Get the payment amount
             var payment_amount = parseFloat($(this).val());
+
+            // Calculate the change
             var change = payment_amount - total;
-            $('#change').val("₱".concat(change.toFixed(2))); // Update the change field in the same row
+
+            // Update the change field
+            $('#change').val("₱" + change.toFixed(2));
         });
     </script>
 

@@ -1,6 +1,17 @@
 <?php
 session_start();
 include "../dbcon.php";
+
+// Generate a random string for remember_token
+function str_random($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    return $randomString;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,11 +67,16 @@ include "../dbcon.php";
                         echo '<script>alert("Passwords do not match!") 
                             window.location.href="update_acc.php"</script>';
                     } else {
+                        // Hash the new password using bcrypt
+                        $hashedPassword = password_hash($_POST['newpassword'], PASSWORD_BCRYPT);
+                        // Generate a random remember_token
+                        $rememberToken = str_random(10);
+
                         $sql = "UPDATE users 
-                                SET `password` = PASSWORD(?) 
+                                SET `password` = ?, `remember_token` = ? 
                                 WHERE `email` = ?";
                         if ($stmt = $conn->prepare($sql)) {
-                            $stmt->bind_param("ss", $_POST['newpassword'], $_POST['email']);
+                            $stmt->bind_param("sss", $hashedPassword, $rememberToken, $_POST['email']);
                             if ($stmt->execute()) {
                                 // Destroy the session and redirect to login page
                                 session_destroy();
